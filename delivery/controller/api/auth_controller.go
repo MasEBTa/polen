@@ -1,6 +1,8 @@
 package api
 
 import (
+	"fmt"
+	"polen/delivery/middleware"
 	"polen/model/dto"
 	"polen/usecase"
 
@@ -62,9 +64,33 @@ func (a *AuthController) registerHandler(c *gin.Context) {
 	c.JSON(200, response)
 }
 
+func (a *AuthController) showUserHandler(c *gin.Context) {
+	name := c.Param("name")
+
+	model, err := a.userUC.FindByUsername(name)
+	fmt.Println(name)
+	if err != nil {
+		c.AbortWithStatusJSON(500, gin.H{
+			"message": err.Error(),
+		})
+		return
+	}
+
+	response := gin.H{
+		"message": "successfully getting data",
+		"data": gin.H{
+			"id":       model.Id,
+			"username": model.Username,
+		},
+	}
+
+	c.JSON(200, response)
+}
+
 func (a *AuthController) Route() {
 	a.rg.POST("/auth/login", a.loginHandler)
 	a.rg.POST("/auth/register", a.registerHandler)
+	a.rg.GET("/user/:name", middleware.AuthMiddleware(), a.showUserHandler)
 }
 
 func NewAuthController(userUC usecase.UserUseCase, authUC usecase.AuthUseCase, rg *gin.RouterGroup) *AuthController {
