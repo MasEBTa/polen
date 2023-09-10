@@ -25,6 +25,12 @@ func (u *userUseCase) FindByUsername(username string) (model.UserCredential, err
 
 // Register implements UserUseCase.
 func (u *userUseCase) Register(payload dto.AuthRequest) error {
+	if payload.Username == "" {
+		return fmt.Errorf("username required")
+	}
+	if payload.Username == "" {
+		return fmt.Errorf("password required")
+	}
 	hashPassword, err := security.HashPassword(payload.Password)
 	if err != nil {
 		return err
