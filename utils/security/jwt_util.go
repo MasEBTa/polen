@@ -10,12 +10,17 @@ import (
 )
 
 func GenerateJwtToken(user model.UserCredential) (string, error) {
+	cfg, err := config.NewConfig()
+	if err != nil {
+		return "", err
+	}
+
 	now := time.Now()
-	end := now.Add(time.Duration(60) * time.Minute)
+	end := now.Add(time.Duration(cfg.ExpirationToken) * time.Minute)
 
 	claims := &AppClaims{
 		RegisteredClaims: jwt.RegisteredClaims{
-			Issuer:    "polen",
+			Issuer:    cfg.ApplicationName,
 			IssuedAt:  jwt.NewNumericDate(now),
 			ExpiresAt: jwt.NewNumericDate(end),
 		},
@@ -24,9 +29,8 @@ func GenerateJwtToken(user model.UserCredential) (string, error) {
 		// Services: []string{},
 	}
 
-	tokenJwt := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	// Ini kita pindah ke config ENV
-	tokenString, err := tokenJwt.SignedString([]byte("secret"))
+	tokenJwt := jwt.NewWithClaims(cfg.JwtSigningMethod, claims)
+	tokenString, err := tokenJwt.SignedString(cfg.JwtSignatureKey)
 	if err != nil {
 		return "", fmt.Errorf("failed to create jwt token: %v", err.Error())
 	}
