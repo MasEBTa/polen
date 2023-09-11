@@ -31,6 +31,12 @@ func (u *userUseCase) Register(payload dto.AuthRequest) error {
 	if payload.Username == "" {
 		return fmt.Errorf("password required")
 	}
+	if payload.Role == "" {
+		return fmt.Errorf("role is required")
+	}
+	if payload.Role != "peminjam" && payload.Role != "pemodal" {
+		return fmt.Errorf("role you has choose isnt available")
+	}
 	hashPassword, err := security.HashPassword(payload.Password)
 	if err != nil {
 		return err
@@ -40,6 +46,7 @@ func (u *userUseCase) Register(payload dto.AuthRequest) error {
 		Id:       common.GenerateID(),
 		Username: payload.Username,
 		Password: hashPassword,
+		Role:     payload.Role,
 	}
 
 	err = u.repo.Save(userCredential)
