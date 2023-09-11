@@ -29,7 +29,7 @@ To clone this ptoject you can do :
 1. Every commit should only include files from one package.
 2. Identify every file you commit:
     
-    a. You should only include new file with other new file in one commit with using flag `"[FEATURE] -> massage"`. 
+    a. You should only include `new` file with other `new` file in one commit with using flag `"[FEATURE] -> massage"`. 
 
-    b. You should only include improve file with other new file in one commit `"[IMPROVE] -> massage"`.
+    b. You should only include `modified` file with other `modified` file in one commit `"[IMPROVE] -> massage"`.
 3. in massage commit, you need to identify what are you doin in that file or what are that file you commit doing
