@@ -16,9 +16,9 @@ type userRepository struct {
 
 // FindByUsername implements UserRepository.
 func (u *userRepository) FindByUsername(username string) (model.UserCredential, error) {
-	row := u.db.QueryRow("SELECT id, username, password FROM user_credential WHERE username = $1", username)
+	row := u.db.QueryRow("SELECT id, username, role, password FROM user_credential WHERE username = $1", username)
 	var userCredential model.UserCredential
-	err := row.Scan(&userCredential.Id, &userCredential.Username, &userCredential.Password)
+	err := row.Scan(&userCredential.Id, &userCredential.Username, &userCredential.Role, &userCredential.Password)
 	if err != nil {
 		return model.UserCredential{}, err
 	}
@@ -27,7 +27,7 @@ func (u *userRepository) FindByUsername(username string) (model.UserCredential, 
 
 // Save implements UserRepository.
 func (u *userRepository) Save(payload model.UserCredential) error {
-	_, err := u.db.Exec("INSERT INTO user_credential VALUES ($1, $2, $3, $4)", payload.Id, payload.Username, payload.Password, true)
+	_, err := u.db.Exec("INSERT INTO user_credential VALUES ($1, $2, $3, $4, $5)", payload.Id, payload.Username, payload.Password, payload.Role, true)
 	if err != nil {
 		return err
 	}

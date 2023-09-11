@@ -3,6 +3,7 @@ package dto
 type AuthRequest struct {
 	Username string
 	Password string
+	Role     string
 }
 
 type AuthResponse struct {
