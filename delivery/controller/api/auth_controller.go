@@ -81,6 +81,7 @@ func (a *AuthController) showUserHandler(c *gin.Context) {
 		"data": gin.H{
 			"id":       model.Id,
 			"username": model.Username,
+			"role":     model.Role,
 		},
 	}
 
