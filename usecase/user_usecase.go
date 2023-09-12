@@ -12,10 +12,17 @@ import (
 type UserUseCase interface {
 	FindByUsername(username string) (model.UserCredential, error)
 	Register(payload dto.AuthRequest) error
+
+	FindById(id string) (model.UserCredential, error)
 }
 
 type userUseCase struct {
 	repo repository.UserRepository
+}
+
+// FindById implements UserUseCase.
+func (u *userUseCase) FindById(id string) (model.UserCredential, error) {
+	return u.repo.FindById(id)
 }
 
 // FindByUsername implements UserUseCase.
