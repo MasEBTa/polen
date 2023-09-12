@@ -84,3 +84,27 @@ func (u *UserRepoTestSuite) TestSave_Failed() {
 	assert.Error(u.T(), err)
 	assert.NotNil(u.T(), err)
 }
+func (u *UserRepoTestSuite) TestFindById_Success() {
+	mockData := model.UserCredential{
+		Id:       "1",
+		Username: "akbar",
+		Password: "123",
+		Role:     "borrower",
+	}
+	rows := sqlmock.NewRows([]string{"id", "username", "role", "password"})
+	rows.AddRow(mockData.Id, mockData.Username, mockData.Role, mockData.Password)
+	expectedSQL := `SELECT id, username, role, password FROM user_credential WHERE id =$1`
+	u.mockSQL.ExpectQuery(regexp.QuoteMeta(expectedSQL)).WithArgs(mockData.Id).WillReturnRows(rows)
+	uc, err := u.repo.FindById(mockData.Id)
+	assert.Nil(u.T(), err)
+	assert.NoError(u.T(), err)
+	assert.Equal(u.T(), mockData, uc)
+}
+func (u *UserRepoTestSuite) TestFindById_Fail() {
+	expectedSQL := `SELECT id, username, role, password FROM user_credential WHERE id =$1`
+	u.mockSQL.ExpectQuery(regexp.QuoteMeta(expectedSQL)).WithArgs("ismail").WillReturnError(errors.New("error"))
+	uc, err := u.repo.FindById("ismail")
+	assert.Error(u.T(), err)
+	assert.NotNil(u.T(), err)
+	assert.Equal(u.T(), model.UserCredential{}, uc)
+}

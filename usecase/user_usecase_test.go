@@ -89,3 +89,24 @@ func (u *UserUseCaseTestSuite) TestRegister_ChooseRoleInvalid() {
 	assert.Error(u.T(), err)
 	assert.NotNil(u.T(), err)
 }
+func (u *UserUseCaseTestSuite) TestFindById_Success() {
+	mockData := model.UserCredential{
+		Id:       "1",
+		Username: "akbar",
+		Password: "123",
+		Role:     "borrower",
+		IsActive: false,
+	}
+	u.urm.On("FindById", mockData.Id).Return(mockData, nil)
+	uc, err := u.uuc.FindById(mockData.Id)
+	assert.Nil(u.T(), err)
+	assert.NoError(u.T(), err)
+	assert.Equal(u.T(), mockData, uc)
+}
+func (u *UserUseCaseTestSuite) TestFindById_Fail() {
+	u.urm.On("FindById", "1").Return(model.UserCredential{}, errors.New("error"))
+	uc, err := u.uuc.FindById("1")
+	assert.Error(u.T(), err)
+	assert.NotNil(u.T(), err)
+	assert.Equal(u.T(), model.UserCredential{}, uc)
+}
