@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"polen/delivery/middleware"
 	"polen/model/dto"
 	"polen/usecase"
@@ -68,7 +67,6 @@ func (a *AuthController) showUserHandler(c *gin.Context) {
 	name := c.Param("name")
 
 	model, err := a.userUC.FindByUsername(name)
-	fmt.Println(name)
 	if err != nil {
 		c.AbortWithStatusJSON(500, gin.H{
 			"message": err.Error(),
