@@ -5,10 +5,16 @@ import "polen/usecase"
 type UseCaseManager interface {
 	AuthUseCase() usecase.AuthUseCase
 	UserUseCase() usecase.UserUseCase
+	BiodataUserUseCase() usecase.BiodataUserUseCase
 }
 
 type useCaseManager struct {
 	repoManager RepoManager
+}
+
+// BiodataUserUseCase implements UseCaseManager.
+func (u *useCaseManager) BiodataUserUseCase() usecase.BiodataUserUseCase {
+	return usecase.NewBiodataUserUseCase(u.repoManager.BiodataRepo(), u.UserUseCase())
 }
 
 // AuthUseCase implements UseCaseManager.
