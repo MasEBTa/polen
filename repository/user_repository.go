@@ -8,10 +8,23 @@ import (
 type UserRepository interface {
 	Save(payload model.UserCredential) error
 	FindByUsername(username string) (model.UserCredential, error)
+
+	FindById(id string) (model.UserCredential, error)
 }
 
 type userRepository struct {
 	db *sql.DB
+}
+
+// FindById implements UserRepository.
+func (u *userRepository) FindById(id string) (model.UserCredential, error) {
+	row := u.db.QueryRow("SELECT id, username, role, password FROM user_credential WHERE id =$1", id)
+	var userCredential model.UserCredential
+	err := row.Scan(&userCredential.Id, &userCredential.Username, &userCredential.Role, &userCredential.Password)
+	if err != nil {
+		return model.UserCredential{}, err
+	}
+	return userCredential, nil
 }
 
 // FindByUsername implements UserRepository.

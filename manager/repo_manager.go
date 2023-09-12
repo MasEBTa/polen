@@ -4,10 +4,17 @@ import "polen/repository"
 
 type RepoManager interface {
 	UserRepo() repository.UserRepository
+	BiodataRepo() repository.BiodataUser
 }
 
 type repoManager struct {
 	infraManager InfraManager
+}
+
+// BiodataRepo implements RepoManager.
+func (r *repoManager) BiodataRepo() repository.BiodataUser {
+	return repository.NewBiodataUserRepository(r.infraManager.Conn())
+
 }
 
 // UserRepo implements RepoManager.
