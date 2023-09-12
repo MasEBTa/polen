@@ -1,13 +1,16 @@
 /*Tabel User_credential*/
-CREATE TABLE
-  public.user_credential
+CREATE TABLE user_credential
 (
   id VARCHAR(225) PRIMARY KEY NOT NULL,
   username VARCHAR(100) NOT NULL UNIQUE,
+  email VARCHAR(100) NOT NULL UNIQUE,
   password VARCHAR(225) NOT NULL,
-  role VARCHAR(50) NOT NULL UNIQUE,
+  role VARCHAR(50) NOT NULL,
+  virtual_account_number VARCHAR(20),
   is_active BOOLEAN
 );
+
+INSERT INTO user_credential (id, username, email, password, role, is_active) VALUES ('456', 'admin', 'compani.mail.yo', 'pass1234','admin', true);
 
 -- Account Table
 CREATE TABLE account (
@@ -23,6 +26,16 @@ CREATE TABLE account (
     FOREIGN KEY (user_credential_id) REFERENCES public.user_credential (id)
 );
 
+-- Account Table
+CREATE TABLE saldo (
+    id VARCHAR(55) PRIMARY KEY NOT NULL,
+    user_credential_id VARCHAR(55) NOT NULL,
+    total_saving INT,
+    FOREIGN KEY (user_credential_id) REFERENCES public.user_credential (id)
+);
+
+INSERT INTO saldo (id, user_credential_id, total_saving) VALUES ('789', '456', 0);
+
 -- Deposit Interest Table
 CREATE TABLE deposit_interest (
     id SERIAL PRIMARY KEY NOT NULL,
@@ -33,31 +46,30 @@ CREATE TABLE deposit_interest (
 -- Deposit Table
 CREATE TABLE deposit (
     id VARCHAR(55) PRIMARY KEY NOT NULL,
-    account_id VARCHAR(55) NOT NULL,
+    user_credential_id VARCHAR(55) NOT NULL,
     deposit_amount DECIMAL(15, 2),
-    deposit_interest_id INT,
+    interest_rate DECIMAL(5, 2) NOT NULL,
     created_date DATE,
     maturity_date DATE,
-    FOREIGN KEY (account_id) REFERENCES account (id)
+    FOREIGN KEY (user_credential_id) REFERENCES user_credential (id)
 );
 
 -- Junction Table between Deposit and Deposit Interest (many-to-many)
-CREATE TABLE deposit_deposit_interest (
-    deposit_id VARCHAR(55),
-    deposit_interest_id INT,
-    FOREIGN KEY (deposit_id) REFERENCES deposit (id),
-    FOREIGN KEY (deposit_interest_id) REFERENCES deposit_interest (id)
-);
+-- CREATE TABLE deposit_deposit_interest (
+--     deposit_id VARCHAR(55),
+--     deposit_interest_id INT,
+--     FOREIGN KEY (deposit_id) REFERENCES deposit (id),
+--     FOREIGN KEY (deposit_interest_id) REFERENCES deposit_interest (id)
+-- );
 
 -- Top Up Table
 CREATE TABLE top_up (
     id VARCHAR(55) PRIMARY KEY NOT NULL,
-    account_id VARCHAR(55) NOT NULL,
+    user_credential_id VARCHAR(55) NOT NULL,
     top_up_amount DECIMAL(15, 2),
-    virtual_account_number VARCHAR(20),
     countdown_time TIMESTAMP,
     status VARCHAR(20),
-    FOREIGN KEY (account_id) REFERENCES account (id)
+    FOREIGN KEY (user_credential_id) REFERENCES user_credential (id)
 );
 
 -- Loan Duration Table
@@ -69,12 +81,12 @@ CREATE TABLE loan_duration (
 -- Loan Table
 CREATE TABLE loan (
     id VARCHAR(55) PRIMARY KEY NOT NULL,
-    account_id VARCHAR(55) NOT NULL,
+    user_credential_id VARCHAR(55) NOT NULL,
     loan_amount DECIMAL(15, 2),
     loan_duration_id INT,
     loan_date DATE,
     status VARCHAR(20),
-    FOREIGN KEY (account_id) REFERENCES account (id),
+    FOREIGN KEY (user_credential_id) REFERENCES user_credential (id),
     FOREIGN KEY (loan_duration_id) REFERENCES loan_duration (id)
 );
 
@@ -92,19 +104,19 @@ CREATE TABLE loan_payment (
 -- Table for Active Loan Duration of Borrowers
 CREATE TABLE active_loan_duration (
     id VARCHAR(55) PRIMARY KEY NOT NULL,
-    account_id VARCHAR(55) NOT NULL,
+    user_credential_id VARCHAR(55) NOT NULL,
     active_loan_count INT,
-    FOREIGN KEY (account_id) REFERENCES account (id)
+    FOREIGN KEY (user_credential_id) REFERENCES user_credential (id)
 );
 
 -- Transaction Table
 CREATE TABLE transaction (
     id VARCHAR(55) PRIMARY KEY NOT NULL,
-    account_id VARCHAR(55) NOT NULL,
+    user_credential_id VARCHAR(55) NOT NULL,
     transaction_type VARCHAR(20) NOT NULL,
     transaction_amount DECIMAL(15, 2) NOT NULL,
     transaction_date DATE NOT NULL,
-    FOREIGN KEY (account_id) REFERENCES account (id)
+    FOREIGN KEY (user_credential_id) REFERENCES user_credential (id)
 );
 
 -- Loan History Table
@@ -118,26 +130,27 @@ CREATE TABLE loan_history (
 );
 
 -- Deposit History Table
-CREATE TABLE deposit_history (
-    id VARCHAR(55) PRIMARY KEY NOT NULL,
-    account_id VARCHAR(55) NOT NULL,
-    modal_amount DECIMAL(15, 2) NOT NULL,
-    deposit_date DATE NOT NULL,
-    interest_rate DECIMAL(5, 2) NOT NULL,
-    status VARCHAR(20) NOT NULL,
-    FOREIGN KEY (account_id) REFERENCES account (id)
-);
+-- CREATE TABLE deposit_history (
+--     id VARCHAR(55) PRIMARY KEY NOT NULL,
+--     account_id VARCHAR(55) NOT NULL,
+--     modal_amount DECIMAL(15, 2) NOT NULL,
+--     deposit_date DATE NOT NULL,
+--     interest_rate DECIMAL(5, 2) NOT NULL,
+--     status VARCHAR(20) NOT NULL,
+--     FOREIGN KEY (account_id) REFERENCES account (id)
+-- );
 
-/*Tabel Biodata User*/
-CREATE TABLE public.biodata_user
-(
-  id VARCHAR(225) PRIMARY KEY NOT NULL,
-  user_credential_id VARCHAR(225) NOT NULL REFERENCES public.user_credential(id),
-  nama_lengkap VARCHAR(225) NOT NULL,
-  nik VARCHAR(20) NOT NULL UNIQUE,
-  nomor_telepon VARCHAR(20) NOT NULL UNIQUE,
-  pekerjaan VARCHAR(225) NOT NULL,
-  tempat_lahir VARCHAR(225) NOT NULL,
-  tanggal_lahir DATE NOT NULL,
-  kode_pos VARCHAR(10) NOT NULL
-);
+DROP TABLE deposit_history;
+DROP TABLE loan_history;
+DROP TABLE saldo;
+DROP TABLE transaction;
+DROP TABLE active_loan_duration;
+DROP TABLE loan_payment;
+DROP TABLE loan;
+DROP TABLE loan_duration;
+DROP TABLE top_up;
+DROP TABLE deposit_deposit_interest;
+DROP TABLE deposit;
+DROP TABLE deposit_interest;
+DROP TABLE account;
+DROP TABLE user_credential;
