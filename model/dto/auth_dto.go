@@ -2,6 +2,7 @@ package dto
 
 type AuthRequest struct {
 	Username string
+	Email    string
 	Password string
 	Role     string
 }
