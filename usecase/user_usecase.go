@@ -35,7 +35,7 @@ func (u *userUseCase) Register(payload dto.AuthRequest) error {
 	if payload.Username == "" {
 		return fmt.Errorf("username required")
 	}
-	if payload.Username == "" {
+	if payload.Password == "" {
 		return fmt.Errorf("password required")
 	}
 	if payload.Role == "" {

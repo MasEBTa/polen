@@ -21,4 +21,5 @@ CREATE TABLE public.biodata_user
   tempat_lahir VARCHAR(225) NOT NULL,
   tanggal_lahir DATE NOT NULL,
   kode_pos VARCHAR(10) NOT NULL
+  
 );
