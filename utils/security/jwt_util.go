@@ -24,6 +24,7 @@ func GenerateJwtToken(user model.UserCredential) (string, error) {
 			IssuedAt:  jwt.NewNumericDate(now),
 			ExpiresAt: jwt.NewNumericDate(end),
 		},
+		Id:       user.Id,
 		Username: user.Username,
 		Role:     user.Role,
 		// Services: []string{},
