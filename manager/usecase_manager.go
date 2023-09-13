@@ -7,10 +7,16 @@ type UseCaseManager interface {
 	UserUseCase() usecase.UserUseCase
 	BiodataUserUseCase() usecase.BiodataUserUseCase
 	TopUpUsecase() usecase.TopUpUseCase
+	DepositerInterestUseCase() usecase.DepositeInterestUseCase
 }
 
 type useCaseManager struct {
 	repoManager RepoManager
+}
+
+// DepositerInterestUseCase implements UseCaseManager.
+func (u *useCaseManager) DepositerInterestUseCase() usecase.DepositeInterestUseCase {
+	return usecase.NewDepositeInterestUseCase(u.repoManager.DepositeInterestRepo())
 }
 
 // TopUpUsecase implements UseCaseManager.
