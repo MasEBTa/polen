@@ -60,12 +60,14 @@ func (u *UserRepoTestSuite) TestSave_Success() {
 	mockData := model.UserCredential{
 		Id:       "1",
 		Username: "akbar",
+		Email:    "akbarismail@gmail.com",
 		Password: "123",
+		VANumber: "Efvfdvfdhucsucuh",
 		Role:     "borrower",
 		IsActive: true,
 	}
 	expectedSQL := `INSERT INTO user_credential`
-	u.mockSQL.ExpectExec(expectedSQL).WithArgs(mockData.Id, mockData.Username, mockData.Password, mockData.Role, mockData.IsActive).WillReturnResult(sqlmock.NewResult(1, 1))
+	u.mockSQL.ExpectExec(expectedSQL).WithArgs(mockData.Id, mockData.Username, mockData.Email, mockData.Password, mockData.Role, mockData.IsActive).WillReturnResult(sqlmock.NewResult(1, 1))
 	err := u.repo.Save(mockData)
 	assert.Nil(u.T(), err)
 	assert.NoError(u.T(), err)
@@ -107,4 +109,81 @@ func (u *UserRepoTestSuite) TestFindById_Fail() {
 	assert.Error(u.T(), err)
 	assert.NotNil(u.T(), err)
 	assert.Equal(u.T(), model.UserCredential{}, uc)
+}
+func (u *UserRepoTestSuite) TestSaldo_Success() {
+	mockUserCred := model.UserCredential{
+		Id:       "1",
+		Username: "akbar",
+		Email:    "akbarismail@gmail.com",
+		Password: "123",
+		VANumber: "Efvfdvfdhucsucuh",
+		Role:     "borrower",
+		IsActive: true,
+	}
+	mockSaldo := model.Saldo{
+		Id: "1",
+		UserCredential: model.UserCredential{
+			Id:       "1",
+			Username: "akbar",
+			Email:    "akbarismail@gmail.com",
+			Password: "123",
+			VANumber: "Efvfdvfdhucsucuh",
+			Role:     "borrower",
+			IsActive: true,
+		},
+		TotalSaving: 0,
+	}
+	u.mockSQL.ExpectBegin()
+	u.mockSQL.ExpectExec(`INSERT INTO user_credential`).WillReturnResult(sqlmock.NewResult(1, 1))
+	u.mockSQL.ExpectExec(`INSERT INTO saldo`).WillReturnResult(sqlmock.NewResult(1, 1))
+	u.mockSQL.ExpectCommit()
+	err := u.repo.Saldo(mockUserCred, mockSaldo.Id)
+	assert.Nil(u.T(), err)
+	assert.NoError(u.T(), err)
+}
+func (u *UserRepoTestSuite) TestSaldo_Fail() {
+	mockUserCred := model.UserCredential{
+		Id:       "1",
+		Username: "akbar",
+		Email:    "akbarismail@gmail.com",
+		Password: "123",
+		VANumber: "Efvfdvfdhucsucuh",
+		Role:     "borrower",
+		IsActive: true,
+	}
+	mockSaldo := model.Saldo{
+		Id: "1",
+		UserCredential: model.UserCredential{
+			Id:       "1",
+			Username: "akbar",
+			Email:    "akbarismail@gmail.com",
+			Password: "123",
+			VANumber: "Efvfdvfdhucsucuh",
+			Role:     "borrower",
+			IsActive: true,
+		},
+		TotalSaving: 0,
+	}
+	// Begin Failed
+	u.mockSQL.ExpectBegin().WillReturnError(errors.New("begin failed"))
+	err := u.repo.Saldo(mockUserCred, mockSaldo.Id)
+	assert.Error(u.T(), err)
+	// User_Credential insert failed
+	u.mockSQL.ExpectBegin()
+	u.mockSQL.ExpectExec(`INSERT INTO user_credential`).WillReturnError(errors.New("insert failed"))
+	err = u.repo.Saldo(mockUserCred, mockSaldo.Id)
+	assert.Error(u.T(), err)
+	// Saldo insert failed
+	u.mockSQL.ExpectBegin()
+	u.mockSQL.ExpectExec(`INSERT INTO user_credential`).WillReturnResult(sqlmock.NewResult(1, 1))
+	u.mockSQL.ExpectExec(`INSERT INTO saldo`).WillReturnError(errors.New("insert failed"))
+	err = u.repo.Saldo(mockUserCred, mockSaldo.Id)
+	assert.Error(u.T(), err)
+	// Commit fail
+	u.mockSQL.ExpectBegin()
+	u.mockSQL.ExpectExec(`INSERT INTO user_credential`).WillReturnResult(sqlmock.NewResult(1, 1))
+	u.mockSQL.ExpectExec(`INSERT INTO saldo`).WillReturnResult(sqlmock.NewResult(1, 1))
+	u.mockSQL.ExpectCommit().WillReturnError(errors.New("commit failed"))
+	err = u.repo.Saldo(mockUserCred, mockSaldo.Id)
+	assert.Error(u.T(), err)
 }

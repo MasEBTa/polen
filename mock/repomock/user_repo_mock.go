@@ -10,6 +10,11 @@ type UserRepoMock struct {
 	mock.Mock
 }
 
+// Saldo implements repository.UserRepository.
+func (u *UserRepoMock) Saldo(payload model.UserCredential, idsaldo string) error {
+	return u.Called(payload, idsaldo).Error(0)
+}
+
 // FindById implements repository.UserRepository.
 func (u *UserRepoMock) FindById(id string) (model.UserCredential, error) {
 	args := u.Called(id)

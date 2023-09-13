@@ -33,6 +33,9 @@ func (u *userRepository) Saldo(payload model.UserCredential, idsaldo string) err
 		tx.Rollback()
 		return err
 	}
+	if err := tx.Commit(); err != nil {
+		return err
+	}
 	return err
 }
 
