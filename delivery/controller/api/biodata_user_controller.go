@@ -96,10 +96,10 @@ func (u *BiodataUserController) deleteHandler(c *gin.Context) {
 }
 
 func (b *BiodataUserController) Route() {
-
+	b.rg.GET("/biodata/create", b.createHandler)
 	b.rg.GET("/biodata", b.listHandler)
 	b.rg.GET("/biodata/:id", b.getByIdHandler)
-	b.rg.PUT("/biodata", b.updateHandler)
+	b.rg.PUT("/biodata/update", b.updateHandler)
 	b.rg.DELETE("/biodata/:id", b.deleteHandler)
 }
 
