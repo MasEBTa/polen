@@ -36,6 +36,7 @@ func (s *Server) initControllers() {
 	rg := s.engine.Group("/api/v1")
 	api.NewAuthController(s.ucManager.UserUseCase(), s.ucManager.AuthUseCase(), rg).Route()
 	api.NewBiodataController(s.ucManager.BiodataUserUseCase(), rg).Route()
+	api.NewTopUpController(s.ucManager.TopUpUsecase(), rg).Route()
 }
 
 func NewServer() *Server {

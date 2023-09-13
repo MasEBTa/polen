@@ -6,10 +6,16 @@ type UseCaseManager interface {
 	AuthUseCase() usecase.AuthUseCase
 	UserUseCase() usecase.UserUseCase
 	BiodataUserUseCase() usecase.BiodataUserUseCase
+	TopUpUsecase() usecase.TopUpUseCase
 }
 
 type useCaseManager struct {
 	repoManager RepoManager
+}
+
+// TopUpUsecase implements UseCaseManager.
+func (u *useCaseManager) TopUpUsecase() usecase.TopUpUseCase {
+	return usecase.NewTopUpUseCase(u.repoManager.TopUpRepo(), u.UserUseCase())
 }
 
 // BiodataUserUseCase implements UseCaseManager.
