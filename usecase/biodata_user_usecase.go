@@ -129,11 +129,6 @@ func (b *biodataUserUseCase) Update(payload model.BiodataUser) error {
 		return err
 	}
 
-	_, err = b.FindById(payload.Id)
-	if err != nil {
-		return err
-	}
-
 	err = b.repo.Update(payload)
 	if err != nil {
 		return fmt.Errorf("failed to update biodata: %v", err)
