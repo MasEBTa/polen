@@ -22,7 +22,7 @@ type biodataUserRepository struct {
 func (b *biodataUserRepository) FindById(id string) (model.BiodataUser, error) {
 	row := b.db.QueryRow(`SELECT b.id, u.user, u.username, u.password, u.role, u.is_active, 
 	b.nama_lengkap, b.nik, b.nomor_telepon, b.pekerjaan, b.tempat_lahir, b.tanggal_lahir, b.kode_pos 
-	FROM biodata_user b JOIN user_credential u ON u.id = b.user_credential_id WHERE b.nik =$1`, id)
+	FROM biodata_user b JOIN user_credential u ON u.id = b.user_credential_id WHERE b.id =$1`, id)
 	biodata := model.BiodataUser{}
 	err := row.Scan(
 		&biodata.Id,
@@ -62,7 +62,7 @@ func (b *biodataUserRepository) FindAll() ([]model.BiodataUser, error) {
 	if err != nil {
 		return nil, err
 	}
-	var biodata []model.BiodataUser
+	var biodatas []model.BiodataUser
 	for rows.Next() {
 		biodata := model.BiodataUser{}
 		err := rows.Scan(
@@ -83,8 +83,9 @@ func (b *biodataUserRepository) FindAll() ([]model.BiodataUser, error) {
 		if err != nil {
 			return nil, err
 		}
+		biodatas = append(biodatas, biodata)
 	}
-	return biodata, nil
+	return biodatas, nil
 }
 
 // FindByNIK implements BiodataUser.
