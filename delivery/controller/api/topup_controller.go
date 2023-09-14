@@ -37,7 +37,7 @@ func (s *TopUpController) createHandler(c *gin.Context) {
 	}
 
 	topup.Id = uuid.NewString()
-	if err := s.topupUC.CreateNew(topup); err != nil {
+	if err := s.topupUC.CreateNew(c, topup); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": err.Error(),
 		})
@@ -47,9 +47,31 @@ func (s *TopUpController) createHandler(c *gin.Context) {
 	c.JSON(http.StatusCreated, topup)
 }
 
+func (u *TopUpController) updateHandler(c *gin.Context) {
+	var topup model.TopUp
+	if err := c.ShouldBindJSON(&topup); err != nil {
+		c.JSON(400, gin.H{
+			"message": err.Error(),
+		})
+		return
+	}
+
+	err := u.topupUC.Update(c, topup)
+	if err != nil {
+		c.JSON(500, gin.H{
+			"message": err.Error(),
+		})
+		return
+	}
+	c.JSON(200, gin.H{
+		"message": "successfully update topup",
+	})
+}
+
 func (t *TopUpController) Route() {
 	t.rg.GET("/topup/create", t.createHandler)
 	t.rg.GET("/topup/:id", t.getByIdHandler)
+	t.rg.PUT("/topup/update", t.updateHandler)
 
 }
 
