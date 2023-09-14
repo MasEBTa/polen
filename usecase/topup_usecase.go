@@ -4,11 +4,15 @@ import (
 	"fmt"
 	"polen/model"
 	"polen/repository"
+	"polen/utils/common"
+
+	"github.com/gin-gonic/gin"
 )
 
 type TopUpUseCase interface {
-	CreateNew(payload model.TopUp) error
+	CreateNew(c *gin.Context, payload model.TopUp) error
 	FindById(id string) (model.TopUp, error)
+	Update(c *gin.Context, payload model.TopUp) error
 }
 
 type topUpUseCase struct {
@@ -16,8 +20,46 @@ type topUpUseCase struct {
 	userUC UserUseCase
 }
 
+// Update implements TopUpUseCase.
+func (t *topUpUseCase) Update(c *gin.Context, payload model.TopUp) error {
+	role, err := common.GetRole(c)
+	if err != nil {
+		return err
+	}
+
+	if role != "admin" {
+		return fmt.Errorf("only admin can be update")
+	}
+	_, err = t.userUC.FindById(payload.UserCredential.Id)
+	if err != nil {
+		return err
+	}
+
+	_, err = t.FindById(payload.Id)
+	if err != nil {
+		return err
+	}
+
+	err = t.repo.Update(payload)
+	if err != nil {
+		return fmt.Errorf("failed to update top up: %v", err)
+	}
+
+	return nil
+
+}
+
 // CreateNew implements TopUpUseCase.
-func (t *topUpUseCase) CreateNew(payload model.TopUp) error {
+func (t *topUpUseCase) CreateNew(c *gin.Context, payload model.TopUp) error {
+	role, err := common.GetRole(c)
+	if err != nil {
+		return err
+	}
+
+	if role != "pemodal" {
+		return fmt.Errorf("Only pemodal users can create top-ups")
+	}
+
 	if payload.TopUpAmount <= 0 {
 		return fmt.Errorf("Top Up must be greater than zero")
 	}
@@ -26,7 +68,7 @@ func (t *topUpUseCase) CreateNew(payload model.TopUp) error {
 		return fmt.Errorf("id is required")
 	}
 
-	_, err := t.userUC.FindById(payload.UserCredential.Id)
+	_, err = t.userUC.FindById(payload.UserCredential.Id)
 	if err != nil {
 		return err
 	}
@@ -37,6 +79,7 @@ func (t *topUpUseCase) CreateNew(payload model.TopUp) error {
 	}
 
 	return nil
+
 }
 
 // FindById implements TopUpUseCase.

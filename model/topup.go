@@ -1,9 +1,11 @@
 package model
 
+import "time"
+
 type TopUp struct {
 	Id             string
 	UserCredential UserCredential
 	TopUpAmount    int
-	MaturityTime   string
-	Status         string
+	MaturityTime   time.Time
+	Status         bool
 }

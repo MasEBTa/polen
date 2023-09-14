@@ -6,10 +6,16 @@ type RepoManager interface {
 	UserRepo() repository.UserRepository
 	BiodataRepo() repository.BiodataUser
 	TopUpRepo() repository.TopUp
+	DepositeInterestRepo() repository.DepositeInterest
 }
 
 type repoManager struct {
 	infraManager InfraManager
+}
+
+// DepositeInterestRepo implements RepoManager.
+func (r *repoManager) DepositeInterestRepo() repository.DepositeInterest {
+	return repository.NewDepositeInterestRepository(r.infraManager.Conn())
 }
 
 // TopUpRepo implements RepoManager.
