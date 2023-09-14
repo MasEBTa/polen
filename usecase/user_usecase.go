@@ -8,17 +8,31 @@ import (
 	"polen/utils/common"
 	"polen/utils/security"
 	"regexp"
+
+	"github.com/gin-gonic/gin"
 )
 
 type UserUseCase interface {
-	FindByUsername(username string) (model.UserCredential, error)
+	FindByUsername(username string, ctx *gin.Context) (model.UserCredential, error)
 	Register(payload dto.AuthRequest) error
-
+	Paging(payload dto.PageRequest, ctx *gin.Context) ([]model.UserCredential, dto.Paging, error)
 	FindById(id string) (model.UserCredential, error)
 }
 
 type userUseCase struct {
 	repo repository.UserRepository
+}
+
+// Paging implements UserUseCase.
+func (u *userUseCase) Paging(payload dto.PageRequest, ctx *gin.Context) ([]model.UserCredential, dto.Paging, error) {
+	role, err := common.GetRole(ctx)
+	if err != nil {
+		return nil, dto.Paging{}, err
+	}
+	if role != "admin" {
+		return nil, dto.Paging{}, fmt.Errorf("you are not allowed")
+	}
+	return u.repo.Pagging(payload)
 }
 
 // FindById implements UserUseCase.
@@ -27,7 +41,20 @@ func (u *userUseCase) FindById(id string) (model.UserCredential, error) {
 }
 
 // FindByUsername implements UserUseCase.
-func (u *userUseCase) FindByUsername(username string) (model.UserCredential, error) {
+func (u *userUseCase) FindByUsername(username string, ctx *gin.Context) (model.UserCredential, error) {
+	role, err := common.GetRole(ctx)
+	if err != nil {
+		return model.UserCredential{}, err
+	}
+	name, err := common.GetName(ctx)
+	if err != nil {
+		return model.UserCredential{}, err
+	}
+	if role != "admin" {
+		if name != username {
+			return model.UserCredential{}, fmt.Errorf("you are not allowed")
+		}
+	}
 	return u.repo.FindByUsername(username)
 }
 
@@ -65,16 +92,19 @@ func (u *userUseCase) Register(payload dto.AuthRequest) error {
 	userCredential := model.UserCredential{
 		Id:       common.GenerateID(),
 		Username: payload.Username,
+		Email:    payload.Email,
 		Password: hashPassword,
 		VANumber: common.GenerateID(),
 		Role:     payload.Role,
 	}
 
+	biodataId := common.GenerateID()
+
 	if userCredential.Role == "pemodal" {
 		saldoId := common.GenerateID()
-		err = u.repo.Saldo(userCredential, saldoId)
+		err = u.repo.Saldo(userCredential, saldoId, biodataId)
 	} else {
-		err = u.repo.Save(userCredential)
+		err = u.repo.Save(userCredential, biodataId)
 	}
 	if err != nil {
 		return fmt.Errorf("failed save user: %v", err.Error())

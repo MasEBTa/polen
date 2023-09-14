@@ -1,10 +1,10 @@
 package api
 
 import (
-	"fmt"
 	"polen/delivery/middleware"
 	"polen/model/dto"
 	"polen/usecase"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -27,7 +27,7 @@ func (a *AuthController) loginHandler(c *gin.Context) {
 	authResponse, err := a.authUC.Login(dto)
 	if err != nil {
 		c.AbortWithStatusJSON(500, gin.H{
-			"message": err.Error(),
+			"message": "Failed",
 		})
 		return
 	}
@@ -67,8 +67,7 @@ func (a *AuthController) registerHandler(c *gin.Context) {
 func (a *AuthController) showUserHandler(c *gin.Context) {
 	name := c.Param("name")
 
-	model, err := a.userUC.FindByUsername(name)
-	fmt.Println(name)
+	model, err := a.userUC.FindByUsername(name, c)
 	if err != nil {
 		c.AbortWithStatusJSON(500, gin.H{
 			"message": err.Error(),
@@ -88,10 +87,46 @@ func (a *AuthController) showUserHandler(c *gin.Context) {
 	c.JSON(200, response)
 }
 
+func (a *AuthController) paggingUserHandler(c *gin.Context) {
+	// Mengambil parameter dari URL
+	page, _ := strconv.Atoi(c.Param("page"))
+	size, _ := strconv.Atoi(c.Param("size"))
+
+	// Memberikan nilai default jika parameter kosong
+	if page == 0 {
+		page = 1 // Nilai default untuk page
+	}
+
+	if size == 0 {
+		size = 10 // Nilai default untuk size
+	}
+	payload := dto.PageRequest{
+		Page: page,
+		Size: size,
+	}
+
+	model, pagereturn, err := a.userUC.Paging(payload, c)
+	if err != nil {
+		c.JSON(500, gin.H{
+			"message": err.Error(),
+		})
+		return
+	}
+
+	response := gin.H{
+		"message": "Success getting data",
+		"data":    model,
+		"paging":  pagereturn,
+	}
+
+	c.JSON(200, response)
+}
+
 func (a *AuthController) Route() {
 	a.rg.POST("/auth/login", a.loginHandler)
 	a.rg.POST("/auth/register", a.registerHandler)
-	a.rg.GET("/user/:name", middleware.AuthMiddleware(), a.showUserHandler)
+	a.rg.GET("/usercred/:name", middleware.AuthMiddleware(), a.showUserHandler)
+	a.rg.GET("/user/:page/:size", middleware.AuthMiddleware(), a.paggingUserHandler)
 }
 
 func NewAuthController(userUC usecase.UserUseCase, authUC usecase.AuthUseCase, rg *gin.RouterGroup) *AuthController {

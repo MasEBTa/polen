@@ -35,6 +35,9 @@ func (s *Server) initMiddlewares() {
 func (s *Server) initControllers() {
 	rg := s.engine.Group("/api/v1")
 	api.NewAuthController(s.ucManager.UserUseCase(), s.ucManager.AuthUseCase(), rg).Route()
+	api.NewBiodataController(s.ucManager.BiodataUserUseCase(), rg).Route()
+	api.NewTopUpController(s.ucManager.TopUpUsecase(), rg).Route()
+	api.NewDepositeInterestController(s.ucManager.DepositerInterestUseCase(), rg).Route()
 }
 
 func NewServer() *Server {

@@ -3,148 +3,145 @@ package usecase
 import (
 	"fmt"
 	"polen/model"
+	"polen/model/dto"
 	"polen/repository"
+	"polen/utils/common"
+	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 type BiodataUserUseCase interface {
-	CreateNew(payload model.BiodataUser) error
-
-	FindById(id string) (model.BiodataUser, error)
-	FindByNIK(nik string) (model.BiodataUser, error)
-	FindAll() ([]model.BiodataUser, error)
-	Update(payload model.BiodataUser) error
-	Delete(id string) error
+	FindByUserCredential(ctx *gin.Context) (dto.BiodataResponse, error)
+	FindByUcId(id string) (dto.BiodataResponse, error)
+	FindUserUpdated() ([]dto.BiodataResponse, error)
+	UserUpdate(payload dto.BiodataRequest, ctx *gin.Context) (int, error)
+	AdminUpdate(payload dto.UpdateBioRequest, ctx *gin.Context) (int, error)
+	Paging(payload dto.PageRequest) ([]dto.BiodataResponse, dto.Paging, error)
 }
 
 type biodataUserUseCase struct {
 	repo   repository.BiodataUser
 	userUC UserUseCase
+	ctx    *gin.Context
 }
 
-// FindById implements BiodataUserUseCase.
-func (b *biodataUserUseCase) FindById(id string) (model.BiodataUser, error) {
-	biodata, err := b.repo.FindById(id)
+// Paging implements BiodataUserUseCase.
+func (bio *biodataUserUseCase) Paging(payload dto.PageRequest) ([]dto.BiodataResponse, dto.Paging, error) {
+	return bio.repo.Pagging(payload)
+}
+
+// FindByUcId implements BiodataUserUseCase.
+func (bio *biodataUserUseCase) FindByUcId(id string) (dto.BiodataResponse, error) {
+	return bio.repo.FindByUcId(id)
+}
+
+// AdminUpdate implements BiodataUserUseCase.
+func (bio *biodataUserUseCase) AdminUpdate(payload dto.UpdateBioRequest, ctx *gin.Context) (int, error) {
+	if payload.Information == "" {
+		return 400, fmt.Errorf("information detail is required")
+	}
+	biodata := model.BiodataUser{
+		IsAglible:   payload.IsAglible,
+		Information: payload.Information,
+	}
+	result, err := bio.FindByUcId(payload.UserCredentialId)
 	if err != nil {
-		return model.BiodataUser{}, err
+		return 500, err
 	}
-	return biodata, nil
+	biodata.Id = result.Id
+	if biodata.IsAglible {
+		biodata.StatusUpdate = true
+	}
+	err = bio.repo.AdminUpdate(biodata)
+	if err != nil {
+		return 500, err
+	}
+	return 200, nil
 }
 
-// CreateNew implements BiodataUserUseCase.
-func (b *biodataUserUseCase) CreateNew(payload model.BiodataUser) error {
-	if payload.Nik == "" {
-		return fmt.Errorf("nik is required")
-	}
-	if payload.UserCredential.Id == "" {
-		return fmt.Errorf("id user is required")
-	}
-
+// UserUpdate implements BiodataUserUseCase.
+func (bio *biodataUserUseCase) UserUpdate(payload dto.BiodataRequest, ctx *gin.Context) (int, error) {
 	if payload.NamaLengkap == "" {
-		return fmt.Errorf("name is required")
+		return 400, fmt.Errorf("name is required")
 	}
-
+	if payload.Nik == "" {
+		return 400, fmt.Errorf("nik is required")
+	}
+	if payload.Nik == "" {
+		return 400, fmt.Errorf("nik is required")
+	}
 	if payload.NomorTelepon == "" {
-		return fmt.Errorf("phone is required")
+		return 400, fmt.Errorf("phone is required")
 	}
-
 	if payload.Pekerjaan == "" {
-		return fmt.Errorf("job is required")
+		return 400, fmt.Errorf("job is required")
+	}
+	if payload.TanggalLahir == "" {
+		return 400, fmt.Errorf("birth date is required")
 	}
 	if payload.TempatLahir == "" {
-		return fmt.Errorf("birth place is required")
+		return 400, fmt.Errorf("place of birth is required")
 	}
-
-	_, err := b.userUC.FindById(payload.UserCredential.Id)
+	if payload.KodePos == "" {
+		return 400, fmt.Errorf("postal code is required")
+	}
+	// find data by user credential
+	result, err := bio.FindByUserCredential(ctx)
 	if err != nil {
-		return err
+		return 500, err
 	}
-
-	err = b.repo.Save(payload)
+	// made payload
+	layout := "2006-01-02"
+	parsedTime, err := time.Parse(layout, payload.TanggalLahir)
 	if err != nil {
-		return fmt.Errorf("failed to save new Biodata: %v", err)
+		return 500, err
 	}
-
-	return nil
+	ucId, err := common.GetId(ctx)
+	if err != nil {
+		return 500, err
+	}
+	biodata := model.BiodataUser{
+		Id:             result.Id,
+		UserCredential: model.UserCredential{Id: ucId},
+		NamaLengkap:    payload.NamaLengkap,
+		Nik:            payload.Nik,
+		NomorTelepon:   payload.NomorTelepon,
+		Pekerjaan:      payload.Pekerjaan,
+		TempatLahir:    payload.TempatLahir,
+		TanggalLahir:   parsedTime,
+		KodePos:        payload.KodePos,
+		StatusUpdate:   true,
+		Information:    "waiting for acceptence",
+	}
+	if result.IsAglible {
+		biodata.IsAglible = false
+	}
+	err = bio.repo.UserUpdate(biodata)
+	if err != nil {
+		return 500, err
+	}
+	return 200, nil
 }
 
-// Delete implements BiodataUserUseCase.
-func (b *biodataUserUseCase) Delete(id string) error {
-	biodata, err := b.repo.FindById(id)
-	if err != nil {
-		return err
-	}
-
-	err = b.repo.DeleteById(biodata.Id)
-	if err != nil {
-		return fmt.Errorf("failed to delete biodata: %v", err)
-	}
-
-	return nil
+// FindUserUpdated implements BiodataUserUseCase.
+func (bio *biodataUserUseCase) FindUserUpdated() ([]dto.BiodataResponse, error) {
+	return bio.repo.FindUserUpdated()
 }
 
-// FindAll implements BiodataUserUseCase.
-func (b *biodataUserUseCase) FindAll() ([]model.BiodataUser, error) {
-	return b.repo.FindAll()
+// FindByUserCredential implements BiodataUserUseCase.
+func (bio *biodataUserUseCase) FindByUserCredential(ctx *gin.Context) (dto.BiodataResponse, error) {
+	id, err := common.GetId(ctx)
+	if err != nil {
+		return dto.BiodataResponse{}, err
+	}
+	return bio.repo.FindByUcId(id)
 }
 
-// FindByNIK implements BiodataUserUseCase.
-func (b *biodataUserUseCase) FindByNIK(nik string) (model.BiodataUser, error) {
-	biodata, err := b.repo.FindByNIK(nik)
-	if err != nil {
-		return model.BiodataUser{}, err
-	}
-	return biodata, nil
-}
-
-// Update implements BiodataUserUseCase.
-func (b *biodataUserUseCase) Update(payload model.BiodataUser) error {
-	if payload.Id == "" {
-		return fmt.Errorf("id is required")
-	}
-
-	if payload.Nik == "" {
-		return fmt.Errorf("nik is required")
-	}
-	if payload.UserCredential.Id == "" {
-		return fmt.Errorf("id user is required")
-	}
-
-	if payload.NamaLengkap == "" {
-		return fmt.Errorf("name is required")
-	}
-
-	if payload.NomorTelepon == "" {
-		return fmt.Errorf("phone is required")
-	}
-
-	if payload.Pekerjaan == "" {
-		return fmt.Errorf("job is required")
-	}
-	if payload.TempatLahir == "" {
-		return fmt.Errorf("birth place is required")
-	}
-
-	_, err := b.userUC.FindById(payload.UserCredential.Id)
-	if err != nil {
-		return err
-	}
-
-	_, err = b.FindById(payload.Id)
-	if err != nil {
-		return err
-	}
-
-	err = b.repo.Update(payload)
-	if err != nil {
-		return fmt.Errorf("failed to update biodata: %v", err)
-	}
-
-	return nil
-}
-
-func NewBiodataUserUseCase(repo repository.BiodataUser, userUC UserUseCase) BiodataUserUseCase {
+func NewBiodataUserUseCase(repo repository.BiodataUser, userUC UserUseCase, ctx *gin.Context) BiodataUserUseCase {
 	return &biodataUserUseCase{
 		repo:   repo,
 		userUC: userUC,
+		ctx:    ctx,
 	}
 }

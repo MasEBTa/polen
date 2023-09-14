@@ -1,4 +1,4 @@
-/*Tabel User_credential*/
+/*Tabel User_credential*/ -- fixed
 CREATE TABLE user_credential
 (
   id VARCHAR(225) PRIMARY KEY NOT NULL,
@@ -6,14 +6,14 @@ CREATE TABLE user_credential
   email VARCHAR(100) NOT NULL UNIQUE,
   password VARCHAR(225) NOT NULL,
   role VARCHAR(50) NOT NULL,
-  virtual_account_number VARCHAR(20),
+  virtual_account_number VARCHAR(225) DEFAULT "",
   is_active BOOLEAN
 );
-
-INSERT INTO user_credential (id, username, email, password, role, is_active) VALUES ('456', 'admin', 'compani.mail.yo', 'pass1234','admin', true);
+-- fixed
+INSERT INTO user_credential (id, username, email, password, role, is_active) VALUES ('456', 'admin', 'compani.mail.yo', '$2a$10$FTqRPKh1IrHzvzi1YbhTbOY0pk.zQPAnh7OxJxK7D4YEih2GG2DqK','admin', true);
 
 -- Account Table
-CREATE TABLE account (
+CREATE TABLE biodata (
     id VARCHAR(55) PRIMARY KEY NOT NULL,
     user_credential_id VARCHAR(55) NOT NULL,
     full_name VARCHAR(255),
@@ -23,6 +23,9 @@ CREATE TABLE account (
     place_of_birth VARCHAR(255),
     date_of_birth DATE,
     postal_code VARCHAR(10),
+    is_eglible BOOLEAN,
+	status_update BOOLEAN,
+	additional_information TEXT NULL DEFAULT 'biodata is not updated',
     FOREIGN KEY (user_credential_id) REFERENCES public.user_credential (id)
 );
 
@@ -33,8 +36,8 @@ CREATE TABLE saldo (
     total_saving INT,
     FOREIGN KEY (user_credential_id) REFERENCES public.user_credential (id)
 );
-
-INSERT INTO saldo (id, user_credential_id, total_saving) VALUES ('789', '456', 0);
+-- fixed
+INSERT INTO saldo (id, user_credential_id, total_saving) VALUES ('789', '456', 100000000);
 
 -- Deposit Interest Table
 CREATE TABLE deposit_interest (
