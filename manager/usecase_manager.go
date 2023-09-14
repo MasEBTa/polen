@@ -1,6 +1,10 @@
 package manager
 
-import "polen/usecase"
+import (
+	"polen/usecase"
+
+	"github.com/gin-gonic/gin"
+)
 
 type UseCaseManager interface {
 	AuthUseCase() usecase.AuthUseCase
@@ -11,6 +15,7 @@ type UseCaseManager interface {
 
 type useCaseManager struct {
 	repoManager RepoManager
+	ctx         *gin.Context
 }
 
 // TopUpUsecase implements UseCaseManager.
@@ -20,7 +25,7 @@ func (u *useCaseManager) TopUpUsecase() usecase.TopUpUseCase {
 
 // BiodataUserUseCase implements UseCaseManager.
 func (u *useCaseManager) BiodataUserUseCase() usecase.BiodataUserUseCase {
-	return usecase.NewBiodataUserUseCase(u.repoManager.BiodataRepo(), u.UserUseCase())
+	return usecase.NewBiodataUserUseCase(u.repoManager.BiodataRepo(), u.UserUseCase(), u.ctx)
 }
 
 // AuthUseCase implements UseCaseManager.
