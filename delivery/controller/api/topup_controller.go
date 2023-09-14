@@ -14,9 +14,9 @@ type TopUpController struct {
 	rg      *gin.RouterGroup
 }
 
-func (u *TopUpController) getByIdHandler(c *gin.Context) {
+func (t *TopUpController) getByIdHandler(c *gin.Context) {
 	id := c.Param("id")
-	biodata, err := u.topupUC.FindById(id)
+	biodata, err := t.topupUC.FindById(id)
 	if err != nil {
 		c.JSON(500, gin.H{
 			"message": err.Error(),
@@ -27,7 +27,7 @@ func (u *TopUpController) getByIdHandler(c *gin.Context) {
 	c.JSON(200, biodata)
 }
 
-func (s *TopUpController) createHandler(c *gin.Context) {
+func (t *TopUpController) createHandler(c *gin.Context) {
 	var topup model.TopUp
 	if err := c.ShouldBindJSON(&topup); err != nil {
 		c.JSON(400, gin.H{
@@ -37,7 +37,7 @@ func (s *TopUpController) createHandler(c *gin.Context) {
 	}
 
 	topup.Id = uuid.NewString()
-	if err := s.topupUC.CreateNew(c, topup); err != nil {
+	if err := t.topupUC.CreateNew(c, topup); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": err.Error(),
 		})
@@ -47,7 +47,7 @@ func (s *TopUpController) createHandler(c *gin.Context) {
 	c.JSON(http.StatusCreated, topup)
 }
 
-func (u *TopUpController) updateHandler(c *gin.Context) {
+func (t *TopUpController) updateHandler(c *gin.Context) {
 	var topup model.TopUp
 	if err := c.ShouldBindJSON(&topup); err != nil {
 		c.JSON(400, gin.H{
@@ -56,7 +56,7 @@ func (u *TopUpController) updateHandler(c *gin.Context) {
 		return
 	}
 
-	err := u.topupUC.Update(c, topup)
+	err := t.topupUC.Update(c, topup)
 	if err != nil {
 		c.JSON(500, gin.H{
 			"message": err.Error(),

@@ -37,7 +37,7 @@ func (s *Server) initControllers() {
 	api.NewAuthController(s.ucManager.UserUseCase(), s.ucManager.AuthUseCase(), rg).Route()
 	api.NewBiodataController(s.ucManager.BiodataUserUseCase(), rg).Route()
 	api.NewTopUpController(s.ucManager.TopUpUsecase(), rg).Route()
-	// api.NewDepositeInterestController(s.ucManager.DepositerInterestUseCase(),rg).Route()
+	api.NewDepositeInterestController(s.ucManager.DepositerInterestUseCase(), rg).Route()
 }
 
 func NewServer() *Server {

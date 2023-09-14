@@ -15,7 +15,7 @@ type BiodataUserController struct {
 	rg        *gin.RouterGroup
 }
 
-func (s *BiodataUserController) createHandler(c *gin.Context) {
+func (b *BiodataUserController) createHandler(c *gin.Context) {
 	var biodata model.BiodataUser
 	if err := c.ShouldBindJSON(&biodata); err != nil {
 		c.JSON(400, gin.H{
@@ -25,7 +25,7 @@ func (s *BiodataUserController) createHandler(c *gin.Context) {
 	}
 
 	biodata.Id = uuid.NewString()
-	if err := s.biodataUC.CreateNew(biodata); err != nil {
+	if err := b.biodataUC.CreateNew(biodata); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": err.Error(),
 		})
@@ -35,8 +35,8 @@ func (s *BiodataUserController) createHandler(c *gin.Context) {
 	c.JSON(http.StatusCreated, biodata)
 }
 
-func (u *BiodataUserController) listHandler(c *gin.Context) {
-	biodata, err := u.biodataUC.FindAll()
+func (b *BiodataUserController) listHandler(c *gin.Context) {
+	biodata, err := b.biodataUC.FindAll()
 	if err != nil {
 		c.JSON(500, gin.H{
 			"message": err.Error(),
@@ -47,9 +47,9 @@ func (u *BiodataUserController) listHandler(c *gin.Context) {
 	c.JSON(200, biodata)
 }
 
-func (u *BiodataUserController) getByIdHandler(c *gin.Context) {
+func (b *BiodataUserController) getByIdHandler(c *gin.Context) {
 	id := c.Param("id")
-	biodata, err := u.biodataUC.FindById(id)
+	biodata, err := b.biodataUC.FindById(id)
 	if err != nil {
 		c.JSON(500, gin.H{
 			"message": err.Error(),
@@ -60,7 +60,7 @@ func (u *BiodataUserController) getByIdHandler(c *gin.Context) {
 	c.JSON(200, biodata)
 }
 
-func (u *BiodataUserController) updateHandler(c *gin.Context) {
+func (b *BiodataUserController) updateHandler(c *gin.Context) {
 	var biodata model.BiodataUser
 	if err := c.ShouldBindJSON(&biodata); err != nil {
 		c.JSON(400, gin.H{
@@ -69,7 +69,7 @@ func (u *BiodataUserController) updateHandler(c *gin.Context) {
 		return
 	}
 
-	err := u.biodataUC.Update(biodata)
+	err := b.biodataUC.Update(biodata)
 	if err != nil {
 		c.JSON(500, gin.H{
 			"message": err.Error(),
@@ -81,9 +81,9 @@ func (u *BiodataUserController) updateHandler(c *gin.Context) {
 	})
 }
 
-func (u *BiodataUserController) deleteHandler(c *gin.Context) {
+func (b *BiodataUserController) deleteHandler(c *gin.Context) {
 	id := c.Param("id")
-	if err := u.biodataUC.Delete(id); err != nil {
+	if err := b.biodataUC.Delete(id); err != nil {
 		c.JSON(500, gin.H{
 			"message": err.Error(),
 		})
