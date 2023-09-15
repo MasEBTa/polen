@@ -105,9 +105,28 @@ func (u *userRepository) Saldo(payload model.UserCredential, idsaldo string, bio
 
 // FindById implements UserRepository.
 func (u *userRepository) FindById(id string) (model.UserCredential, error) {
-	row := u.db.QueryRow("SELECT id, username, role, password FROM user_credential WHERE id =$1", id)
+	row := u.db.QueryRow(`
+		SELECT 
+			id, 
+			username, 
+			email,
+			role, 
+			virtual_account_number,
+			is_active
+		FROM 
+			user_credential 
+		WHERE 
+			id =$1`, id)
 	var userCredential model.UserCredential
-	err := row.Scan(&userCredential.Id, &userCredential.Username, &userCredential.Role, &userCredential.Password)
+	userCredential.Password = "**********"
+	err := row.Scan(
+		&userCredential.Id,
+		&userCredential.Username,
+		&userCredential.Email,
+		&userCredential.Role,
+		&userCredential.VANumber,
+		&userCredential.IsActive,
+	)
 	if err != nil {
 		return model.UserCredential{}, err
 	}
