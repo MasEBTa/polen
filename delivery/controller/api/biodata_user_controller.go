@@ -5,9 +5,9 @@ import (
 	"net/http"
 	"polen/model"
 	"polen/usecase"
+	"polen/utils/common"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 )
 
 type BiodataUserController struct {
@@ -24,7 +24,7 @@ func (s *BiodataUserController) createHandler(c *gin.Context) {
 		return
 	}
 
-	biodata.Id = uuid.NewString()
+	biodata.Id = common.GenerateID()
 	if err := s.biodataUC.CreateNew(biodata); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": err.Error(),
@@ -96,7 +96,7 @@ func (u *BiodataUserController) deleteHandler(c *gin.Context) {
 }
 
 func (b *BiodataUserController) Route() {
-
+	b.rg.POST("/biodata", b.createHandler)
 	b.rg.GET("/biodata", b.listHandler)
 	b.rg.GET("/biodata/:id", b.getByIdHandler)
 	b.rg.PUT("/biodata", b.updateHandler)

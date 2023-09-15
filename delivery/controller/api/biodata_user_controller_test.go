@@ -181,3 +181,26 @@ func (b *BiodataUserControllerTestSuite) TestUpdateHandler_BindingError() {
 	b.router.ServeHTTP(recorder, request)
 	assert.Equal(b.T(), http.StatusBadRequest, recorder.Code)
 }
+func (b *BiodataUserControllerTestSuite) TestCreateHandler_ServerError() {
+	b.buucm.On("CreateNew", mockBiodataUser).Return(errors.New("failed"))
+	rg := b.router.Group("/api/v1")
+	NewBiodataController(b.buucm, rg).Route()
+	recorder := httptest.NewRecorder()
+	payloadMarshal, err := json.Marshal(mockBiodataUser)
+	assert.NoError(b.T(), err)
+	request := httptest.NewRequest(http.MethodPost, "/api/v1/biodata", bytes.NewBuffer(payloadMarshal))
+	b.router.ServeHTTP(recorder, request)
+	response := recorder.Body.Bytes()
+	var biodata model.BiodataUser
+	json.Unmarshal(response, &biodata)
+	assert.Equal(b.T(), http.StatusInternalServerError, recorder.Code)
+	assert.NotEqual(b.T(), mockBiodataUser.Id, biodata.Id)
+}
+func (b *BiodataUserControllerTestSuite) TestCreateHandler_BindingError() {
+	rg := b.router.Group("/api/v1")
+	NewBiodataController(b.buucm, rg).Route()
+	recorder := httptest.NewRecorder()
+	request := httptest.NewRequest(http.MethodPost, "/api/v1/biodata", nil)
+	b.router.ServeHTTP(recorder, request)
+	assert.Equal(b.T(), http.StatusBadRequest, recorder.Code)
+}
