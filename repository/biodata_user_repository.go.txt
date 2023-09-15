@@ -1,0 +1,243 @@
+package repository
+
+import (
+	"database/sql"
+	"polen/model"
+)
+
+type BiodataUser interface {
+	Save(payload model.BiodataUser) error
+	// FindByNIK(nik string) (model.BiodataUser, error)
+	// FindAll() ([]model.BiodataUser, error)
+	Update(payload model.BiodataUser) error
+	// DeleteById(id string) error
+	// FindById(id string) (model.BiodataUser, error)
+	FindByUcId(id string) (model.BiodataUser, error)
+}
+
+type biodataUserRepository struct {
+	db *sql.DB
+}
+
+// FindByUcId implements BiodataUser.
+func (bio *biodataUserRepository) FindByUcId(id string) (model.BiodataUser, error) {
+	row := bio.db.QueryRow(`
+	SELECT 
+			b.id, 
+				u.id, 
+				u.username, 
+				u.password, 
+				u.role, 
+				u.is_active, 
+			b.full_name, 
+			b.nik, 
+			b.phone_number, 
+			b.occupation, 
+			b.place_of_birth, 
+			b.date_of_birth, 
+			b.postal_code,
+			b.is_eglible,
+			b.additional_information
+		FROM 
+			biodata b 
+		JOIN 
+			user_credential u 
+		ON 
+			u.id = b.user_credential_id
+		WHERE
+			b.user_credential_id = $1;
+`, id)
+	biodata := model.BiodataUser{}
+	err := row.Scan(
+		&biodata.Id,
+		&biodata.UserCredential.Id,
+		&biodata.UserCredential.Username,
+		&biodata.UserCredential.Password,
+		&biodata.UserCredential.Role,
+		&biodata.UserCredential.IsActive,
+		&biodata.NamaLengkap,
+		&biodata.Nik,
+		&biodata.NomorTelepon,
+		&biodata.Pekerjaan,
+		&biodata.TempatLahir,
+		&biodata.TanggalLahir,
+		&biodata.KodePos,
+		&biodata.IsAglible,
+		&biodata.Information,
+	)
+	if err != nil {
+		return model.BiodataUser{}, err
+	}
+	return biodata, nil
+}
+
+// // FindById implements BiodataUser.
+// func (b *biodataUserRepository) FindById(id string) (model.BiodataUser, error) {
+// 	row := b.db.QueryRow(`SELECT b.id, u.user, u.username, u.password, u.role, u.is_active,
+// 	b.nama_lengkap, b.nik, b.nomor_telepon, b.pekerjaan, b.tempat_lahir, b.tanggal_lahir, b.kode_pos
+// 	FROM account b JOIN user_credential u ON u.id = b.user_credential_id WHERE b.nik =$1`, id)
+// 	biodata := model.BiodataUser{}
+// 	err := row.Scan(
+// 		&biodata.Id,
+// 		&biodata.UserCredential.Id,
+// 		&biodata.UserCredential.Username,
+// 		&biodata.UserCredential.Password,
+// 		&biodata.UserCredential.Role,
+// 		&biodata.UserCredential.IsActive,
+// 		&biodata.NamaLengkap,
+// 		&biodata.Nik,
+// 		&biodata.NomorTelepon,
+// 		&biodata.Pekerjaan,
+// 		&biodata.TempatLahir,
+// 		&biodata.TanggalLahir,
+// 		&biodata.KodePos,
+// 	)
+// 	if err != nil {
+// 		return model.BiodataUser{}, err
+// 	}
+// 	return biodata, nil
+// }
+
+// // DeleteById implements BiodataUser.
+// func (b *biodataUserRepository) DeleteById(id string) error {
+// 	_, err := b.db.Exec("DELETE FROM account WHERE id = $1", id)
+// 	if err != nil {
+// 		return err
+// 	}
+// 	return nil
+// }
+
+// // FindAll implements BiodataUser.
+// func (b *biodataUserRepository) FindAll() ([]model.BiodataUser, error) {
+// 	rows, err := b.db.Query(`
+// 		SELECT
+// 			b.id,
+// 				u.user,
+// 				u.username,
+// 				u.password,
+// 				u.role,
+// 				u.is_active,
+// 			b.nama_lengkap,
+// 			b.nik,
+// 			b.nomor_telepon,
+// 			b.pekerjaan,
+// 			b.tempat_lahir,
+// 			b.tanggal_lahir,
+// 			b.kode_pos
+// 	FROM
+// 		account b
+// 	JOIN
+// 		user_credential u
+// 	ON u.id = b.user_credential_id
+// 	`)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	var biodata []model.BiodataUser
+// 	for rows.Next() {
+// 		biodata := model.BiodataUser{}
+// 		err := rows.Scan(
+// 			&biodata.Id,
+// 			&biodata.UserCredential.Id,
+// 			&biodata.UserCredential.Username,
+// 			&biodata.UserCredential.Password,
+// 			&biodata.UserCredential.Role,
+// 			&biodata.UserCredential.IsActive,
+// 			&biodata.NamaLengkap,
+// 			&biodata.Nik,
+// 			&biodata.NomorTelepon,
+// 			&biodata.Pekerjaan,
+// 			&biodata.TempatLahir,
+// 			&biodata.TanggalLahir,
+// 			&biodata.KodePos,
+// 		)
+// 		if err != nil {
+// 			return nil, err
+// 		}
+// 	}
+// 	return biodata, nil
+// }
+
+// // FindByNIK implements BiodataUser.
+// func (b *biodataUserRepository) FindByNIK(nik string) (model.BiodataUser, error) {
+// 	row := b.db.QueryRow(`SELECT b.id, u.user, u.username, u.password, u.role, u.is_active,
+// 	b.nama_lengkap, b.nik, b.nomor_telepon, b.pekerjaan, b.tempat_lahir, b.tanggal_lahir, b.kode_pos
+// 	FROM account b JOIN user_credential u ON u.id = b.user_credential_id WHERE b.nik =$1`, nik)
+// 	biodata := model.BiodataUser{}
+// 	err := row.Scan(
+// 		&biodata.Id,
+// 		&biodata.UserCredential.Id,
+// 		&biodata.UserCredential.Username,
+// 		&biodata.UserCredential.Password,
+// 		&biodata.UserCredential.Role,
+// 		&biodata.UserCredential.IsActive,
+// 		&biodata.NamaLengkap,
+// 		&biodata.Nik,
+// 		&biodata.NomorTelepon,
+// 		&biodata.Pekerjaan,
+// 		&biodata.TempatLahir,
+// 		&biodata.TanggalLahir,
+// 		&biodata.KodePos,
+// 	)
+// 	if err != nil {
+// 		return model.BiodataUser{}, err
+// 	}
+// 	return biodata, nil
+// }
+
+// Save implements BiodataUser.
+func (b *biodataUserRepository) Save(payload model.BiodataUser) error {
+	_, err := b.db.Exec("INSERT INTO account VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)",
+		payload.Id,
+		payload.UserCredential.Id,
+		payload.NamaLengkap,
+		payload.Nik,
+		payload.NomorTelepon,
+		payload.Pekerjaan,
+		payload.TempatLahir,
+		payload.TanggalLahir,
+		payload.KodePos,
+		payload.IsAglible,
+	)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// // Update implements BiodataUser.
+func (b *biodataUserRepository) Update(payload model.BiodataUser) error {
+	_, err := b.db.Exec(`
+		UPDATE biodata SET 
+			user_credential_id = $2, 
+			full_name = $3, 
+			nik = $4, 
+			phone_number = $5, 
+			occupation = $6, 
+			place_of_birth = $7, 
+			date_of_birth = $8, 
+			postal_code = $9,
+			is_eglible = $10,
+			additional_information = $11
+		WHERE id = $1`,
+		payload.Id,
+		payload.UserCredential.Id,
+		payload.NamaLengkap,
+		payload.Nik,
+		payload.NomorTelepon,
+		payload.Pekerjaan,
+		payload.TempatLahir,
+		payload.TanggalLahir,
+		payload.KodePos,
+		payload.IsAglible,
+		payload.Information,
+	)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func NewBiodataUserRepository(db *sql.DB) BiodataUser {
+	return &biodataUserRepository{db: db}
+}

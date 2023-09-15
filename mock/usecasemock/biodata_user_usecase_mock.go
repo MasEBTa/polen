@@ -1,8 +1,9 @@
 package usecasemock
 
 import (
-	"polen/model"
+	"polen/model/dto"
 
+	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/mock"
 )
 
@@ -10,44 +11,56 @@ type BiodataUserUseCaseMock struct {
 	mock.Mock
 }
 
-// FindById implements BiodataUserUseCase.
-func (b *BiodataUserUseCaseMock) FindById(id string) (model.BiodataUser, error) {
-	args := b.Called(id)
-	if args.Get(1) != nil {
-		return model.BiodataUser{}, args.Error(1)
+// Paging implements BiodataUserUseCase.
+func (bio *BiodataUserUseCaseMock) Paging(payload dto.PageRequest) ([]dto.BiodataResponse, dto.Paging, error) {
+	args := bio.Called(payload)
+	if args.Get(2) != nil {
+		return nil, dto.Paging{}, args.Error(2)
 	}
-	return args.Get(0).(model.BiodataUser), nil
+	return args.Get(0).([]dto.BiodataResponse), args.Get(1).(dto.Paging), nil
 }
 
-// CreateNew implements BiodataUserUseCaseMock.
-func (b *BiodataUserUseCaseMock) CreateNew(payload model.BiodataUser) error {
-	return b.Called(payload).Error(0)
+// FindByUcId implements BiodataUserUseCaseMock.
+func (bio *BiodataUserUseCaseMock) FindByUcId(id string) (dto.BiodataResponse, error) {
+	args := bio.Called(id)
+	if args.Get(1) != nil {
+		return dto.BiodataResponse{}, args.Error(1)
+	}
+	return args.Get(0).(dto.BiodataResponse), nil
 }
 
-// Delete implements BiodataUserUseCaseMock.
-func (b *BiodataUserUseCaseMock) Delete(id string) error {
-	return b.Called(id).Error(0)
+// AdminUpdate implements BiodataUserUseCaseMock.
+func (bio *BiodataUserUseCaseMock) AdminUpdate(payload dto.UpdateBioRequest, ctx *gin.Context) (int, error) {
+	args := bio.Called(payload, ctx)
+	if args.Get(1) != nil {
+		return 0, args.Error(1)
+	}
+	return 200, nil
 }
 
-// FindAll implements BiodataUserUseCaseMock.
-func (b *BiodataUserUseCaseMock) FindAll() ([]model.BiodataUser, error) {
-	args := b.Called()
+// UserUpdate implements BiodataUserUseCaseMock.
+func (bio *BiodataUserUseCaseMock) UserUpdate(payload dto.BiodataRequest, ctx *gin.Context) (int, error) {
+	args := bio.Called(payload, ctx)
+	if args.Get(1) != nil {
+		return 0, args.Error(1)
+	}
+	return 200, nil
+}
+
+// FindUserUpdated implements BiodataUserUseCaseMock.
+func (bio *BiodataUserUseCaseMock) FindUserUpdated() ([]dto.BiodataResponse, error) {
+	args := bio.Called()
 	if args.Get(1) != nil {
 		return nil, args.Error(1)
 	}
-	return args.Get(0).([]model.BiodataUser), nil
+	return args.Get(0).([]dto.BiodataResponse), nil
 }
 
-// FindByNIK implements BiodataUserUseCaseMock.
-func (b *BiodataUserUseCaseMock) FindByNIK(nik string) (model.BiodataUser, error) {
-	args := b.Called(nik)
+// FindByUserCredential implements BiodataUserUseCaseMock.
+func (bio *BiodataUserUseCaseMock) FindByUserCredential(ctx *gin.Context) (dto.BiodataResponse, error) {
+	args := bio.Called(ctx)
 	if args.Get(1) != nil {
-		return model.BiodataUser{}, args.Error(1)
+		return dto.BiodataResponse{}, args.Error(1)
 	}
-	return args.Get(0).(model.BiodataUser), nil
-}
-
-// Update implements BiodataUserUseCaseMock.
-func (b *BiodataUserUseCaseMock) Update(payload model.BiodataUser) error {
-	return b.Called(payload).Error(0)
+	return args.Get(0).(dto.BiodataResponse), nil
 }

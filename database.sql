@@ -1,4 +1,4 @@
-/*Tabel User_credential*/
+/*Tabel User_credential*/ -- fixed
 CREATE TABLE user_credential
 (
   id VARCHAR(225) PRIMARY KEY NOT NULL,
@@ -6,14 +6,14 @@ CREATE TABLE user_credential
   email VARCHAR(100) NOT NULL UNIQUE,
   password VARCHAR(225) NOT NULL,
   role VARCHAR(50) NOT NULL,
-  virtual_account_number VARCHAR(20),
+  virtual_account_number VARCHAR(225) DEFAULT "",
   is_active BOOLEAN
 );
-
-INSERT INTO user_credential (id, username, email, password, role, is_active) VALUES ('456', 'admin', 'compani.mail.yo', 'pass1234','admin', true);
+-- fixed
+INSERT INTO user_credential (id, username, email, password, role, is_active) VALUES ('456', 'admin', 'compani.mail.yo', '$2a$10$FTqRPKh1IrHzvzi1YbhTbOY0pk.zQPAnh7OxJxK7D4YEih2GG2DqK','admin', true);
 
 -- Account Table
-CREATE TABLE account (
+CREATE TABLE biodata (
     id VARCHAR(55) PRIMARY KEY NOT NULL,
     user_credential_id VARCHAR(55) NOT NULL,
     full_name VARCHAR(255),
@@ -23,6 +23,9 @@ CREATE TABLE account (
     place_of_birth VARCHAR(255),
     date_of_birth DATE,
     postal_code VARCHAR(10),
+    is_eglible BOOLEAN,
+	status_update BOOLEAN,
+	additional_information TEXT NULL DEFAULT 'biodata is not updated',
     FOREIGN KEY (user_credential_id) REFERENCES public.user_credential (id)
 );
 
@@ -33,8 +36,8 @@ CREATE TABLE saldo (
     total_saving INT,
     FOREIGN KEY (user_credential_id) REFERENCES public.user_credential (id)
 );
-
-INSERT INTO saldo (id, user_credential_id, total_saving) VALUES ('789', '456', 0);
+-- fixed
+INSERT INTO saldo (id, user_credential_id, total_saving) VALUES ('789', '456', 100000000);
 
 -- Deposit Interest Table
 CREATE TABLE deposit_interest (
@@ -72,10 +75,26 @@ CREATE TABLE top_up (
     FOREIGN KEY (user_credential_id) REFERENCES user_credential (id)
 );
 
--- Loan Duration Table
+-- application cost Table
+CREATE TABLE application_handling_cost (
+    id VARCHAR(55) PRIMARY KEY NOT NULL,
+    name VARCHAR(100) NOT NULL UNIQUE,
+    nominal INT NOT NULL,
+    unit VARCHAR(100) NOT NULL UNIQUE,
+);
+
+-- -- Loan Duration Table
+-- CREATE TABLE loan_duration (
+--     id SERIAL PRIMARY KEY NOT NULL,
+--     duration_months INT NOT NULL,
+--     loan_interest_rate DECIMAL(5, 2) NOT NULL
+-- );
+
+-- Loan duration Table
 CREATE TABLE loan_duration (
     id SERIAL PRIMARY KEY NOT NULL,
-    duration_months INT
+    duration_months INT NOT NULL,
+    loan_interest_rate DECIMAL(5, 2) NOT NULL
 );
 
 -- Loan Table
@@ -83,11 +102,31 @@ CREATE TABLE loan (
     id VARCHAR(55) PRIMARY KEY NOT NULL,
     user_credential_id VARCHAR(55) NOT NULL,
     loan_amount DECIMAL(15, 2),
-    loan_duration_id INT,
-    loan_date DATE,
+    loan_duration INT,
+    loan_interest_rate DECIMAL(5, 2) NOT NULL,
+    application_handling_cost_nominal INT NOT NULL,
+    application_handling_cost_unit INT NOT NULL,
+    total_amount_of_dept INT NOT NULL,
+    loan_date_created DATE,
     status VARCHAR(20),
-    FOREIGN KEY (user_credential_id) REFERENCES user_credential (id),
-    FOREIGN KEY (loan_duration_id) REFERENCES loan_duration (id)
+    FOREIGN KEY (user_credential_id) REFERENCES user_credential (id)
+);
+
+-- Installenment Loan
+CREATE TABLE installenment_loan (
+    id VARCHAR(55) PRIMARY KEY NOT NULL,
+    user_credential_id VARCHAR(55) NOT NULL,
+    loan_id VARCHAR(55) NOT NULL,
+    isPayed BOOLEAN,
+    payment_installenment INT,
+    payment_deadline DATE,
+    application_handling_cost_nominal INT NOT NULL,
+    application_handling_cost_unit INT NOT NULL,
+    total_amount_of_dept INT NOT NULL,
+    loan_date_created DATE,
+    status VARCHAR(20),
+    FOREIGN KEY (user_credential_id) REFERENCES user_credential (id)
+    FOREIGN KEY (loan_id) REFERENCES loan (id)
 );
 
 -- Loan Payment Table
@@ -101,13 +140,13 @@ CREATE TABLE loan_payment (
     FOREIGN KEY (loan_id) REFERENCES loan (id)
 );
 
--- Table for Active Loan Duration of Borrowers
-CREATE TABLE active_loan_duration (
-    id VARCHAR(55) PRIMARY KEY NOT NULL,
-    user_credential_id VARCHAR(55) NOT NULL,
-    active_loan_count INT,
-    FOREIGN KEY (user_credential_id) REFERENCES user_credential (id)
-);
+-- -- Table for Active Loan Duration of Borrowers
+-- CREATE TABLE active_loan_duration (
+--     id VARCHAR(55) PRIMARY KEY NOT NULL,
+--     user_credential_id VARCHAR(55) NOT NULL,
+--     active_loan_count INT,
+--     FOREIGN KEY (user_credential_id) REFERENCES user_credential (id)
+-- );
 
 -- Transaction Table
 CREATE TABLE transaction (

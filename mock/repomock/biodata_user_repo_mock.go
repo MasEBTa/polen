@@ -2,6 +2,7 @@ package repomock
 
 import (
 	"polen/model"
+	"polen/model/dto"
 
 	"github.com/stretchr/testify/mock"
 )
@@ -10,44 +11,39 @@ type BiodataUserRepoMock struct {
 	mock.Mock
 }
 
-// FindById implements BiodataUser.
-func (b *BiodataUserRepoMock) FindById(id string) (model.BiodataUser, error) {
-	args := b.Called(id)
-	if args.Get(1) != nil {
-		return model.BiodataUser{}, args.Error(1)
+// Pagging implements BiodataUser.
+func (bio *BiodataUserRepoMock) Pagging(payload dto.PageRequest) ([]dto.BiodataResponse, dto.Paging, error) {
+	args := bio.Called(payload)
+	if args.Get(2) != nil {
+		return nil, dto.Paging{}, args.Error(2)
 	}
-	return args.Get(0).(model.BiodataUser), nil
+	return args.Get(0).([]dto.BiodataResponse), args.Get(1).(dto.Paging), nil
 }
 
-// DeleteById implements BiodataUser.
-func (b *BiodataUserRepoMock) DeleteById(id string) error {
-	return b.Called(id).Error(0)
+// AdminUpdate implements BiodataUser.
+func (bio *BiodataUserRepoMock) AdminUpdate(payload model.BiodataUser) error {
+	return bio.Called(payload).Error(0)
 }
 
-// FindAll implements BiodataUser.
-func (b *BiodataUserRepoMock) FindAll() ([]model.BiodataUser, error) {
-	args := b.Called()
+// UserUpdate implements BiodataUser.
+func (bio *BiodataUserRepoMock) UserUpdate(payload model.BiodataUser) error {
+	return bio.Called(payload).Error(0)
+}
+
+// FindByUcId implements BiodataUser.
+func (bio *BiodataUserRepoMock) FindByUcId(id string) (dto.BiodataResponse, error) {
+	args := bio.Called(id)
+	if args.Get(1) != nil {
+		return dto.BiodataResponse{}, args.Error(1)
+	}
+	return args.Get(0).(dto.BiodataResponse), nil
+}
+
+// FindByUcId implements BiodataUser.
+func (bio *BiodataUserRepoMock) FindUserUpdated() ([]dto.BiodataResponse, error) {
+	args := bio.Called()
 	if args.Get(1) != nil {
 		return nil, args.Error(1)
 	}
-	return args.Get(0).([]model.BiodataUser), nil
-}
-
-// FindByNIK implements BiodataUser.
-func (b *BiodataUserRepoMock) FindByNIK(nik string) (model.BiodataUser, error) {
-	args := b.Called(nik)
-	if args.Get(1) != nil {
-		return model.BiodataUser{}, args.Error(1)
-	}
-	return args.Get(0).(model.BiodataUser), nil
-}
-
-// Save implements BiodataUser.
-func (b *BiodataUserRepoMock) Save(payload model.BiodataUser) error {
-	return b.Called(payload).Error(0)
-}
-
-// Update implements BiodataUser.
-func (b *BiodataUserRepoMock) Update(payload model.BiodataUser) error {
-	return b.Called(payload).Error(0)
+	return args.Get(0).([]dto.BiodataResponse), nil
 }
