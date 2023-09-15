@@ -3,18 +3,27 @@ package usecase
 import (
 	"fmt"
 	"polen/model"
+	"polen/model/dto"
 	"polen/repository"
+	"polen/utils/common"
+	"time"
 )
 
 type DepositeInterestUseCase interface {
-	CreateNew(payload model.DepositeInterest) error
-	FindById(id string) (model.DepositeInterest, error)
-	Update(payload model.DepositeInterest) error
+	CreateNew(payload dto.DepositeInterestRequest) (int, error)
+	Pagging(payload dto.PageRequest) ([]dto.DepositeInterestRequest, dto.Paging, error)
+	FindById(id string) (dto.DepositeInterestRequest, error)
+	Update(payload dto.DepositeInterestRequest) error
 	DeleteById(id string) error
 }
 
 type depositeInterestUseCase struct {
 	repo repository.DepositeInterest
+}
+
+// Pagging implements DepositeInterestUseCase.
+func (d *depositeInterestUseCase) Pagging(payload dto.PageRequest) ([]dto.DepositeInterestRequest, dto.Paging, error) {
+	return d.repo.Pagging(payload)
 }
 
 // DeleteById implements DepositeInterestUseCase.
@@ -33,23 +42,29 @@ func (d *depositeInterestUseCase) DeleteById(id string) error {
 }
 
 // FindById implements DepositeInterestUseCase.
-func (d *depositeInterestUseCase) FindById(id string) (model.DepositeInterest, error) {
-	deposite, err := d.repo.FindById(id)
-	if err != nil {
-		return model.DepositeInterest{}, err
-	}
-	return deposite, nil
+func (d *depositeInterestUseCase) FindById(id string) (dto.DepositeInterestRequest, error) {
+	return d.repo.FindById(id)
 }
 
 // Update implements DepositeInterestUseCase.
-func (d *depositeInterestUseCase) Update(payload model.DepositeInterest) error {
+func (d *depositeInterestUseCase) Update(payload dto.DepositeInterestRequest) error {
 	if payload.Id == "" {
 		return fmt.Errorf("id is required")
 	}
 
-	_, err := d.FindById(payload.Id)
+	result, err := d.FindById(payload.Id)
 	if err != nil {
 		return err
+	}
+
+	if payload.InterestRate == 0 {
+		payload.InterestRate = result.InterestRate
+	}
+	if payload.TaxRate == 0 {
+		payload.TaxRate = result.TaxRate
+	}
+	if payload.DurationMounth == 0 {
+		payload.DurationMounth = result.DurationMounth
 	}
 
 	err = d.repo.Update(payload)
@@ -61,15 +76,31 @@ func (d *depositeInterestUseCase) Update(payload model.DepositeInterest) error {
 }
 
 // CreateNew implements DepositeInteresetUseCase.
-func (d *depositeInterestUseCase) CreateNew(payload model.DepositeInterest) error {
+func (d *depositeInterestUseCase) CreateNew(payload dto.DepositeInterestRequest) (int, error) {
 	if payload.Id == "" {
-		return fmt.Errorf("id is required")
+		return 400, fmt.Errorf("id is required")
+	}
+	if payload.InterestRate == 0 {
+		return 400, fmt.Errorf("id is required")
+	}
+	if payload.TaxRate == 0 {
+		return 400, fmt.Errorf("id is required")
+	}
+	if payload.DurationMounth == 0 {
+		return 400, fmt.Errorf("id is required")
+	}
+	model := model.DepositeInterest{
+		Id:             common.GenerateID(),
+		CreateDate:     time.Now(),
+		InterestRate:   payload.InterestRate,
+		TaxRate:        payload.TaxRate,
+		DurationMounth: payload.DurationMounth,
 	}
 
-	if err := d.repo.Save(payload); err != nil {
-		return fmt.Errorf("failed save Deposite Interest: %v", err.Error())
+	if err := d.repo.Save(model); err != nil {
+		return 500, err
 	}
-	return nil
+	return 201, nil
 }
 
 func NewDepositeInterestUseCase(repo repository.DepositeInterest) DepositeInterestUseCase {

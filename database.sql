@@ -43,7 +43,8 @@ INSERT INTO saldo (id, user_credential_id, total_saving) VALUES ('789', '456', 1
 CREATE TABLE deposit_interest (
     id SERIAL PRIMARY KEY NOT NULL,
     created_date DATE,
-    interest_rate DECIMAL(5, 2)
+    interest_rate DECIMAL(5, 2),
+    duration_mounth INT NOT NULL
 );
 
 -- Deposit Table

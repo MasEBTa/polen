@@ -15,25 +15,6 @@ type BiodataUserController struct {
 	rg        *gin.RouterGroup
 }
 
-// func (s *BiodataUserController) createHandler(c *gin.Context) {
-// 	var biodata dto.BiodataRequest
-// 	if err := c.ShouldBindJSON(&biodata); err != nil {
-// 		c.JSON(400, gin.H{
-// 			"message": err.Error(),
-// 		})
-// 		return
-// 	}
-
-// 	if err := s.biodataUC.CreateNew(biodata, c); err != nil {
-// 		c.JSON(http.StatusInternalServerError, gin.H{
-// 			"message": err.Error(),
-// 		})
-// 		return
-// 	}
-
-// 	c.JSON(http.StatusCreated, biodata)
-// }
-
 func (u *BiodataUserController) listHandler(c *gin.Context) {
 	biodata, err := u.biodataUC.FindByUserCredential(c)
 	if err != nil {
@@ -63,8 +44,8 @@ func (u *BiodataUserController) listUserUpdated(c *gin.Context) {
 	biodata, err := u.biodataUC.FindUserUpdated()
 	if err != nil {
 		c.JSON(500, gin.H{
-			"message": err.Error(),
-			// "message": "internal server error",
+			// "message": err.Error(),
+			"message": "internal server error",
 		})
 		return
 	}
@@ -82,6 +63,12 @@ func (u *BiodataUserController) updateAdmin(c *gin.Context) {
 	}
 	role, err := common.GetRole(c)
 	if err != nil {
+		if err.Error() == "unautorized" {
+			c.JSON(401, gin.H{
+				"message": err.Error(),
+			})
+			return
+		}
 		c.JSON(500, gin.H{
 			"message": err.Error(),
 			// "message": "internal server error",
@@ -132,8 +119,15 @@ func (b *BiodataUserController) paggingBiodataHandler(c *gin.Context) {
 	// get role
 	role, err := common.GetRole(c)
 	if err != nil {
+		if err.Error() == "unautorized" {
+			c.JSON(401, gin.H{
+				"message": err.Error(),
+			})
+			return
+		}
 		c.JSON(500, gin.H{
-			"message": "internal server error",
+			"message": err.Error(),
+			// "message": "internal server error",
 		})
 		return
 	}
