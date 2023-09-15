@@ -14,11 +14,11 @@ INSERT INTO user_credential (id, username, email, password, role, is_active) VAL
 
 -- Account Table
 CREATE TABLE biodata (
-    id VARCHAR(55) PRIMARY KEY NOT NULL,
+    id VARCHAR(55) PRIMARY KEY NOT NULL UNIQUE,
     user_credential_id VARCHAR(55) NOT NULL,
     full_name VARCHAR(255),
-    nik VARCHAR(20),
-    phone_number VARCHAR(20),
+    nik VARCHAR(20) UNIQUE,
+    phone_number VARCHAR(20) UNIQUE,
     occupation VARCHAR(255),
     place_of_birth VARCHAR(255),
     date_of_birth DATE,
