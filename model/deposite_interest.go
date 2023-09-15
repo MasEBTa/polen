@@ -10,7 +10,13 @@ type DepositeInterest struct {
 	DurationMounth int
 }
 
-// profit
+// grossProfit
 // (setoran pokok*interest rate*durationDay)/365
 
 // tax
+// TaxRate*profit
+
+// netProfit
+// grossProfit-tax
+
+// totalIncome
