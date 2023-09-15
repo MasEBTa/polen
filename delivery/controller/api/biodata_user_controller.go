@@ -30,8 +30,15 @@ func (u *BiodataUserController) listHandler(c *gin.Context) {
 func (u *BiodataUserController) listUserUpdated(c *gin.Context) {
 	role, err := common.GetRole(c)
 	if err != nil {
+		if err.Error() == "unautorized" {
+			c.JSON(401, gin.H{
+				"message": err.Error(),
+			})
+			return
+		}
 		c.JSON(500, gin.H{
-			"message": "internal server error",
+			"message": err.Error(),
+			// "message": "internal server error",
 		})
 		return
 	}

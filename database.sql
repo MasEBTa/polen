@@ -47,6 +47,18 @@ CREATE TABLE deposit_interest (
     duration_mounth INT NOT NULL
 );
 
+-- Top Up Table
+CREATE TABLE top_up (
+    id VARCHAR(55) PRIMARY KEY NOT NULL,
+    user_credential_id VARCHAR(55) NOT NULL,
+    top_up_amount INT,
+    countdown_time TIMESTAMP,
+    accepted BOOLEAN,
+    status VARCHAR(20), -- accepted/waiting/canceled
+    transfer_confirmation_recipt BOOLEAN,
+    FOREIGN KEY (user_credential_id) REFERENCES user_credential (id)
+);
+
 -- Deposit Table
 CREATE TABLE deposit (
     id VARCHAR(55) PRIMARY KEY NOT NULL,
@@ -65,16 +77,6 @@ CREATE TABLE deposit (
 --     FOREIGN KEY (deposit_id) REFERENCES deposit (id),
 --     FOREIGN KEY (deposit_interest_id) REFERENCES deposit_interest (id)
 -- );
-
--- Top Up Table
-CREATE TABLE top_up (
-    id VARCHAR(55) PRIMARY KEY NOT NULL,
-    user_credential_id VARCHAR(55) NOT NULL,
-    top_up_amount DECIMAL(15, 2),
-    countdown_time TIMESTAMP,
-    status VARCHAR(20),
-    FOREIGN KEY (user_credential_id) REFERENCES user_credential (id)
-);
 
 -- application cost Table
 CREATE TABLE application_handling_cost (
