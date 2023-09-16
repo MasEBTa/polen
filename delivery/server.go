@@ -38,6 +38,7 @@ func (s *Server) initControllers() {
 	api.NewBiodataController(s.ucManager.BiodataUserUseCase(), rg).Route()
 	api.NewTopUpController(s.ucManager.TopUpUsecase(), rg).Route()
 	api.NewDepositeInterestController(s.ucManager.DepositerInterestUseCase(), rg).Route()
+	api.NewLoanInterestController(s.ucManager.LoanInterestUseCase(), rg).Route()
 }
 
 func NewServer() *Server {
