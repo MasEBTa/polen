@@ -39,6 +39,7 @@ func (s *Server) initControllers() {
 	api.NewTopUpController(s.ucManager.TopUpUsecase(), s.ucManager.BiodataUserUseCase(), rg).Route()
 	api.NewDepositeInterestController(s.ucManager.DepositerInterestUseCase(), rg).Route()
 	api.NewSaldoController(s.ucManager.SaldoUsecase(), rg).Route()
+	api.NewDepositeController(s.ucManager.DepositeUsecase(), rg).Route()
 }
 
 func NewServer() *Server {
@@ -57,6 +58,31 @@ func NewServer() *Server {
 	log := logrus.New()
 
 	engine := gin.Default()
+
+	// // Jadwal pembaruan database setiap 24 jam
+	// updateInterval := 24 * time.Hour
+
+	// // Mulai penjadwalan pembaruan database
+	// ticker := time.NewTicker(updateInterval)
+
+	// // Loop tak terbatas untuk menjalankan pembaruan database
+	// go func() {
+	// 	err := useCaseManager.DepositeUsecase().Update()
+	// 	fmt.Println("hollaa")
+	// 	if err != nil {
+	// 		log.Error("Gagal melakukan pembaruan database: ", err)
+	// 	}
+	// 	fmt.Println("Melakukan pembaruan database...")
+	// 	for range ticker.C {
+	// 		// Panggil fungsi untuk melakukan pembaruan database di sini
+	// 		err := useCaseManager.DepositeUsecase().Update()
+	// 		if err != nil {
+	// 			log.Error("Gagal melakukan pembaruan database: ", err)
+	// 		}
+	// 		fmt.Println("Melakukan pembaruan database...")
+	// 	}
+	// }()
+
 	return &Server{
 		ucManager: useCaseManager,
 		engine:    engine,
