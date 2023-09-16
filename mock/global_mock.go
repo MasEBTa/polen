@@ -40,17 +40,9 @@ var MockBiodata = model.BiodataUser{
 	Information:    "biodata is not updated",
 }
 var MockSaldo = model.Saldo{
-	Id: "1",
-	UserCredential: model.UserCredential{
-		Id:       "1",
-		Username: "akbar",
-		Email:    "akbarismail@gmail.com",
-		Password: "123",
-		VANumber: "Efvfdvfdhucsucuh",
-		Role:     "borrower",
-		IsActive: true,
-	},
-	TotalSaving: 0,
+	Id:    "1",
+	UcId:  "1",
+	Total: 0,
 }
 var MockPageReq = dto.PageRequest{
 	Page: 1,
@@ -61,6 +53,27 @@ var MockPaging = dto.Paging{
 	Size:       5,
 	TotalRows:  1,
 	TotalPages: 1,
+}
+var MockListTopUp = []dto.TopUp{
+	{
+		Id:                    "1",
+		VaNumber:              "vfdbvhfdbdhf",
+		TopUpAmount:           1000,
+		MaturityTime:          time.Now(),
+		AcceptedTime:          time.Now(),
+		Accepted:              false,
+		Status:                "not accepted",
+		TransferConfirmRecipe: false,
+		File:                  "",
+	},
+}
+var MockDeposites = []dto.DepositeInterestRequest{
+	{
+		Id:             "1",
+		InterestRate:   1,
+		TaxRate:        1,
+		DurationMounth: 12,
+	},
 }
 var MockUserCreds = []model.UserCredential{
 	{
@@ -120,8 +133,15 @@ var MockBiodataResponses = []dto.BiodataResponse{
 	},
 }
 var MockDepositeInterest = model.DepositeInterest{
-	Id:           "1",
-	CreateDate:   time.Now(),
-	InterestDate: time.Now(),
-	Duration:     30,
+	Id:             "1",
+	CreateDate:     time.Now(),
+	InterestRate:   1,
+	TaxRate:        1,
+	DurationMounth: 12,
+}
+var MockDepositeInterestReq = dto.DepositeInterestRequest{
+	Id:             "1",
+	InterestRate:   1,
+	TaxRate:        1,
+	DurationMounth: 12,
 }

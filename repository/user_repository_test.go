@@ -79,9 +79,9 @@ func (u *UserRepoTestSuite) TestSave_Failed() {
 	assert.Error(u.T(), err)
 }
 func (u *UserRepoTestSuite) TestFindById_Success() {
-	rows := sqlmock.NewRows([]string{"id", "username", "role", "password"})
-	rows.AddRow(mock.MockUserCred.Id, mock.MockUserCred.Username, mock.MockUserCred.Role, mock.MockUserCred.Password)
-	expectedSQL := `SELECT id, username, role, password FROM user_credential WHERE id =$1`
+	rows := sqlmock.NewRows([]string{"id", "username", "email", "role", "virtual_account_number", "is_active"})
+	rows.AddRow(mock.MockUserCred.Id, mock.MockUserCred.Username, mock.MockUserCred.Email, mock.MockUserCred.Role, mock.MockUserCred.VANumber, mock.MockUserCred.IsActive)
+	expectedSQL := `SELECT id, username, email, role, virtual_account_number, is_active FROM user_credential WHERE id =$1`
 	u.mockSQL.ExpectQuery(regexp.QuoteMeta(expectedSQL)).WithArgs(mock.MockUserCred.Id).WillReturnRows(rows)
 	uc, err := u.repo.FindById(mock.MockUserCred.Id)
 	assert.Nil(u.T(), err)
@@ -89,9 +89,9 @@ func (u *UserRepoTestSuite) TestFindById_Success() {
 	assert.Equal(u.T(), mock.MockUserCred.Id, uc.Id)
 }
 func (u *UserRepoTestSuite) TestFindById_Fail() {
-	expectedSQL := `SELECT id, username, role, password FROM user_credential WHERE id =$1`
-	u.mockSQL.ExpectQuery(regexp.QuoteMeta(expectedSQL)).WithArgs("ismail").WillReturnError(errors.New("error"))
-	uc, err := u.repo.FindById("ismail")
+	expectedSQL := `SELECT id, username, email, role, virtual_account_number, is_active FROM user_credential WHERE id =$1`
+	u.mockSQL.ExpectQuery(regexp.QuoteMeta(expectedSQL)).WithArgs(mock.MockUserCred.Id).WillReturnError(errors.New("error"))
+	uc, err := u.repo.FindById(mock.MockUserCred.Id)
 	assert.Error(u.T(), err)
 	assert.NotNil(u.T(), err)
 	assert.Equal(u.T(), model.UserCredential{}, uc)
@@ -148,7 +148,6 @@ func (u *UserRepoTestSuite) TestPagging_Success() {
 	assert.Equal(u.T(), 1, p.TotalRows)
 }
 func (u *UserRepoTestSuite) TestPagging_Fail() {
-
 	// error select paging
 	expectedSQL := `SELECT id, username, email, role, virtual_account_number, is_active FROM user_credential LIMIT $2 OFFSET $1`
 	u.mockSQL.ExpectQuery(regexp.QuoteMeta(expectedSQL)).WillReturnError(errors.New("failed"))
