@@ -14,11 +14,11 @@ INSERT INTO user_credential (id, username, email, password, role, is_active) VAL
 
 -- Account Table
 CREATE TABLE biodata (
-    id VARCHAR(55) PRIMARY KEY NOT NULL,
+    id VARCHAR(55) PRIMARY KEY NOT NULL UNIQUE,
     user_credential_id VARCHAR(55) NOT NULL,
     full_name VARCHAR(255),
-    nik VARCHAR(20),
-    phone_number VARCHAR(20),
+    nik VARCHAR(20) UNIQUE,
+    phone_number VARCHAR(20) UNIQUE,
     occupation VARCHAR(255),
     place_of_birth VARCHAR(255),
     date_of_birth DATE,
@@ -43,7 +43,20 @@ INSERT INTO saldo (id, user_credential_id, total_saving) VALUES ('789', '456', 1
 CREATE TABLE deposit_interest (
     id SERIAL PRIMARY KEY NOT NULL,
     created_date DATE,
-    interest_rate DECIMAL(5, 2)
+    interest_rate DECIMAL(5, 2),
+    duration_mounth INT NOT NULL
+);
+
+-- Top Up Table
+CREATE TABLE top_up (
+    id VARCHAR(55) PRIMARY KEY NOT NULL,
+    user_credential_id VARCHAR(55) NOT NULL,
+    top_up_amount INT,
+    countdown_time TIMESTAMP,
+    accepted BOOLEAN,
+    status VARCHAR(20), -- accepted/waiting/canceled
+    transfer_confirmation_recipt BOOLEAN,
+    FOREIGN KEY (user_credential_id) REFERENCES user_credential (id)
 );
 
 -- Deposit Table
@@ -64,16 +77,6 @@ CREATE TABLE deposit (
 --     FOREIGN KEY (deposit_id) REFERENCES deposit (id),
 --     FOREIGN KEY (deposit_interest_id) REFERENCES deposit_interest (id)
 -- );
-
--- Top Up Table
-CREATE TABLE top_up (
-    id VARCHAR(55) PRIMARY KEY NOT NULL,
-    user_credential_id VARCHAR(55) NOT NULL,
-    top_up_amount DECIMAL(15, 2),
-    countdown_time TIMESTAMP,
-    status VARCHAR(20),
-    FOREIGN KEY (user_credential_id) REFERENCES user_credential (id)
-);
 
 -- application cost Table
 CREATE TABLE application_handling_cost (

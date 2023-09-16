@@ -12,11 +12,17 @@ type UseCaseManager interface {
 	BiodataUserUseCase() usecase.BiodataUserUseCase
 	TopUpUsecase() usecase.TopUpUseCase
 	DepositerInterestUseCase() usecase.DepositeInterestUseCase
+	SaldoUsecase() usecase.SaldoUsecase
 }
 
 type useCaseManager struct {
 	repoManager RepoManager
 	ctx         *gin.Context
+}
+
+// SaldoUsecase implements UseCaseManager.
+func (u *useCaseManager) SaldoUsecase() usecase.SaldoUsecase {
+	return usecase.NewSaldoUsecase(u.repoManager.SaldoRepo())
 }
 
 // DepositerInterestUseCase implements UseCaseManager.

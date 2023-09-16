@@ -1,7 +1,7 @@
 package model
 
 type Saldo struct {
-	Id             string
-	UserCredential UserCredential
-	TotalSaving    int
+	Id    string
+	UcId  string
+	Total int
 }
