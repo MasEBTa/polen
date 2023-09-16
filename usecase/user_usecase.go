@@ -21,10 +21,15 @@ type UserUseCase interface {
 
 type userUseCase struct {
 	repo repository.UserRepository
+	ctx  *gin.Context
 }
 
 // Paging implements UserUseCase.
 func (u *userUseCase) Paging(payload dto.PageRequest, ctx *gin.Context) ([]model.UserCredential, dto.Paging, error) {
+	// limit Size, Offset (page - 1) * size
+	if payload.Page < 0 {
+		payload.Page = 1
+	}
 	role, err := common.GetRole(ctx)
 	if err != nil {
 		return nil, dto.Paging{}, err
@@ -117,8 +122,9 @@ func isValidEmail(pattern, email string) bool {
 	return match
 }
 
-func NewUserUseCase(repo repository.UserRepository) UserUseCase {
+func NewUserUseCase(repo repository.UserRepository, ctx *gin.Context) UserUseCase {
 	return &userUseCase{
 		repo: repo,
+		ctx:  ctx,
 	}
 }

@@ -6,6 +6,7 @@ import (
 	"errors"
 	"net/http"
 	"net/http/httptest"
+	"polen/mock"
 	"polen/mock/usecasemock"
 	"polen/model/dto"
 	"testing"
@@ -28,27 +29,16 @@ func (a *AuthControllerTestSuite) SetupTest() {
 	a.router = gin.Default()
 }
 
-var mockAuthRequest = dto.AuthRequest{
-	Username: "akbar",
-	Email:    "akbar@gmail.com",
-	Password: "123",
-	Role:     "peminjam",
-}
-var mockAuthResponse = dto.AuthResponse{
-	Username: mockAuthRequest.Username,
-	Token:    "",
-}
-
 func TestAuthControllerTestSuite(t *testing.T) {
 	suite.Run(t, new(AuthControllerTestSuite))
 }
 
 func (a *AuthControllerTestSuite) TestLoginHandler_Success() {
-	a.auc.On("Login", mockAuthRequest).Return(mockAuthResponse, nil)
+	a.auc.On("Login", mock.MockAuthReq).Return(mock.MockAuthResponse, nil)
 	mockRg := a.router.Group("/api/v1")
 	NewAuthController(a.uuc, a.auc, mockRg).Route()
 	recorder := httptest.NewRecorder()
-	payloadMarshal, err := json.Marshal(mockAuthRequest)
+	payloadMarshal, err := json.Marshal(mock.MockAuthReq)
 	assert.NoError(a.T(), err)
 
 	request := httptest.NewRequest(http.MethodPost, "/api/v1/auth/login", bytes.NewBuffer(payloadMarshal))
@@ -62,15 +52,15 @@ func (a *AuthControllerTestSuite) TestLoginHandler_Success() {
 	}
 	json.Unmarshal(response, &loginResponseSuccess)
 	assert.Equal(a.T(), http.StatusOK, recorder.Code)
-	assert.Equal(a.T(), "akbar", loginResponseSuccess.Data.Username)
+	assert.Equal(a.T(), mock.MockAuthReq.Username, loginResponseSuccess.Data.Username)
 	assert.Equal(a.T(), "successfully login", loginResponseSuccess.Message)
 }
 func (a *AuthControllerTestSuite) TestLoginHandler_ServerError() {
-	a.auc.On("Login", mockAuthRequest).Return(mockAuthResponse, errors.New("failed"))
+	a.auc.On("Login", mock.MockAuthReq).Return(mock.MockAuthResponse, errors.New("failed"))
 	mockRg := a.router.Group("/api/v1")
 	NewAuthController(a.uuc, a.auc, mockRg).Route()
 	recorder := httptest.NewRecorder()
-	payloadMarshal, err := json.Marshal(mockAuthRequest)
+	payloadMarshal, err := json.Marshal(mock.MockAuthReq)
 	assert.NoError(a.T(), err)
 
 	request := httptest.NewRequest(http.MethodPost, "/api/v1/auth/login", bytes.NewBuffer(payloadMarshal))
@@ -83,7 +73,7 @@ func (a *AuthControllerTestSuite) TestLoginHandler_ServerError() {
 	}
 	json.Unmarshal(response, &loginResponseErr)
 	assert.Equal(a.T(), http.StatusInternalServerError, recorder.Code)
-	assert.Equal(a.T(), "failed", loginResponseErr.Message)
+	assert.Equal(a.T(), "Failed", loginResponseErr.Message)
 }
 func (a *AuthControllerTestSuite) TestLoginHandler_BindingError() {
 	mockRg := a.router.Group("/api/v1")
@@ -94,11 +84,11 @@ func (a *AuthControllerTestSuite) TestLoginHandler_BindingError() {
 	assert.Equal(a.T(), http.StatusBadRequest, recorder.Code)
 }
 func (a *AuthControllerTestSuite) TestRegisterHandler_Success() {
-	a.uuc.On("Register", mockAuthRequest).Return(nil)
+	a.uuc.On("Register", mock.MockAuthReq).Return(nil)
 	mockRg := a.router.Group("/api/v1")
 	NewAuthController(a.uuc, a.auc, mockRg).Route()
 	recorder := httptest.NewRecorder()
-	payloadMarshal, err := json.Marshal(mockAuthRequest)
+	payloadMarshal, err := json.Marshal(mock.MockAuthReq)
 	assert.NoError(a.T(), err)
 
 	request := httptest.NewRequest(http.MethodPost, "/api/v1/auth/register", bytes.NewBuffer(payloadMarshal))
@@ -114,11 +104,11 @@ func (a *AuthControllerTestSuite) TestRegisterHandler_Success() {
 	assert.Equal(a.T(), "successfully register", registerResSuccess.Message)
 }
 func (a *AuthControllerTestSuite) TestRegisterHandler_ServerError() {
-	a.uuc.On("Register", mockAuthRequest).Return(errors.New("failed"))
+	a.uuc.On("Register", mock.MockAuthReq).Return(errors.New("failed"))
 	mockRg := a.router.Group("/api/v1")
 	NewAuthController(a.uuc, a.auc, mockRg).Route()
 	recorder := httptest.NewRecorder()
-	payloadMarshal, err := json.Marshal(mockAuthRequest)
+	payloadMarshal, err := json.Marshal(mock.MockAuthReq)
 	assert.NoError(a.T(), err)
 
 	request := httptest.NewRequest(http.MethodPost, "/api/v1/auth/register", bytes.NewBuffer(payloadMarshal))

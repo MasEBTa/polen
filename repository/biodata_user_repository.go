@@ -21,10 +21,6 @@ type biodataUserRepository struct {
 
 // Pagging implements BiodataUser.
 func (bio *biodataUserRepository) Pagging(payload dto.PageRequest) ([]dto.BiodataResponse, dto.Paging, error) {
-	// limit Size, Offset (page - 1) * size
-	if payload.Page < 0 {
-		payload.Page = 1
-	}
 	query := `SELECT 
 		b.id, 
 			u.id, 

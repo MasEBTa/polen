@@ -28,6 +28,10 @@ type biodataUserUseCase struct {
 
 // Paging implements BiodataUserUseCase.
 func (bio *biodataUserUseCase) Paging(payload dto.PageRequest) ([]dto.BiodataResponse, dto.Paging, error) {
+	// limit Size, Offset (page - 1) * size
+	if payload.Page < 0 {
+		payload.Page = 1
+	}
 	return bio.repo.Pagging(payload)
 }
 
