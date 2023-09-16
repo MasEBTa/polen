@@ -8,6 +8,7 @@ type RepoManager interface {
 	TopUpRepo() repository.TopUp
 	DepositeInterestRepo() repository.DepositeInterest
 	LoanInterestRepo() repository.LoanInterest
+	SaldoRepo() repository.SaldoRepository
 }
 
 type repoManager struct {
@@ -17,6 +18,11 @@ type repoManager struct {
 // LoanInterestRepo implements RepoManager.
 func (r *repoManager) LoanInterestRepo() repository.LoanInterest {
 	return repository.NewLoanInterestRepository(r.infraManager.Conn())
+}
+
+// SaldoRepo implements RepoManager.
+func (r *repoManager) SaldoRepo() repository.SaldoRepository {
+	return repository.NewSaldoRepository(r.infraManager.Conn())
 }
 
 // DepositeInterestRepo implements RepoManager.

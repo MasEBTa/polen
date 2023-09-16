@@ -117,10 +117,7 @@ func (d *depositeInterest) Update(payload dto.DepositeInterestRequest) error {
 		payload.TaxRate,
 		payload.DurationMounth,
 	)
-	if err != nil {
-		return err
-	}
-	return nil
+	return err
 }
 
 // Save implements DepositeIntereset.

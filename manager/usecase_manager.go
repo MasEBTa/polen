@@ -13,6 +13,7 @@ type UseCaseManager interface {
 	TopUpUsecase() usecase.TopUpUseCase
 	DepositerInterestUseCase() usecase.DepositeInterestUseCase
 	LoanInterestUseCase() usecase.LoanInterestUseCase
+	SaldoUsecase() usecase.SaldoUsecase
 }
 
 type useCaseManager struct {
@@ -23,6 +24,12 @@ type useCaseManager struct {
 // LoanInterestUseCase implements UseCaseManager.
 func (u *useCaseManager) LoanInterestUseCase() usecase.LoanInterestUseCase {
 	return usecase.NewLoanInterestUseCase(u.repoManager.LoanInterestRepo())
+
+}
+
+// SaldoUsecase implements UseCaseManager.
+func (u *useCaseManager) SaldoUsecase() usecase.SaldoUsecase {
+	return usecase.NewSaldoUsecase(u.repoManager.SaldoRepo())
 }
 
 // DepositerInterestUseCase implements UseCaseManager.
