@@ -7,11 +7,23 @@ type RepoManager interface {
 	BiodataRepo() repository.BiodataUser
 	TopUpRepo() repository.TopUp
 	DepositeInterestRepo() repository.DepositeInterest
+	LoanInterestRepo() repository.LoanInterest
 	SaldoRepo() repository.SaldoRepository
+	AppHandlingCostRepo() repository.AppHandlingCost
 }
 
 type repoManager struct {
 	infraManager InfraManager
+}
+
+// AppHandlingCostRepo implements RepoManager.
+func (r *repoManager) AppHandlingCostRepo() repository.AppHandlingCost {
+	return repository.NewAppHandlingCostRepository(r.infraManager.Conn())
+}
+
+// LoanInterestRepo implements RepoManager.
+func (r *repoManager) LoanInterestRepo() repository.LoanInterest {
+	return repository.NewLoanInterestRepository(r.infraManager.Conn())
 }
 
 // SaldoRepo implements RepoManager.
