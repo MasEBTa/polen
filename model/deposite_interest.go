@@ -14,9 +14,10 @@ type DepositeInterest struct {
 // (setoran pokok*interest rate*durationDay)/365
 
 // tax
-// TaxRate*profit
+// TaxRate*grossProfit
 
 // netProfit
 // grossProfit-tax
 
-// totalIncome
+// totalReturn
+// setoran+netProfit

@@ -11,6 +11,7 @@ CREATE TABLE user_credential
 );
 -- fixed
 INSERT INTO user_credential (id, username, email, password, role, is_active) VALUES ('456', 'admin', 'compani.mail.yo', '$2a$10$FTqRPKh1IrHzvzi1YbhTbOY0pk.zQPAnh7OxJxK7D4YEih2GG2DqK','admin', true);
+INSERT INTO user_credential (id, username, email, password, role, is_active) VALUES ('taxacc', 'tax', 'compani.tax.yo', '$2a$10$FTqRPKh1IrHzvzi1YbhTbOY0pk.zQPAnh7OxJxK7D4YEih2GG2DqK','admin', true);
 
 -- Account Table
 CREATE TABLE biodata (
@@ -38,12 +39,14 @@ CREATE TABLE saldo (
 );
 -- fixed
 INSERT INTO saldo (id, user_credential_id, total_saving) VALUES ('789', '456', 100000000);
+INSERT INTO saldo (id, user_credential_id, total_saving) VALUES ('tax', 'taxacc', 0);
 
 -- Deposit Interest Table
 CREATE TABLE deposit_interest (
-    id SERIAL PRIMARY KEY NOT NULL,
+    id VARCHAR(55) PRIMARY KEY NOT NULL,
     created_date DATE,
-    interest_rate DECIMAL(5, 2),
+    interest_rate DECIMAL,
+	tax_rate DECIMAL,
     duration_mounth INT NOT NULL
 );
 
@@ -63,10 +66,17 @@ CREATE TABLE top_up (
 CREATE TABLE deposit (
     id VARCHAR(55) PRIMARY KEY NOT NULL,
     user_credential_id VARCHAR(55) NOT NULL,
-    deposit_amount DECIMAL(15, 2),
-    interest_rate DECIMAL(5, 2) NOT NULL,
+    deposit_amount INT,
+    interest_rate DECIMAL,
+    tax_rate DECIMAL,
+    duration int,
     created_date DATE,
     maturity_date DATE,
+    status VARCHAR(55),
+    gross_profit int,
+    tax int,
+    net_profit int,
+    total_return int,
     FOREIGN KEY (user_credential_id) REFERENCES user_credential (id)
 );
 
@@ -161,26 +171,6 @@ CREATE TABLE transaction (
     FOREIGN KEY (user_credential_id) REFERENCES user_credential (id)
 );
 
--- Loan History Table
-CREATE TABLE loan_history (
-    id VARCHAR(55) PRIMARY KEY NOT NULL,
-    account_id VARCHAR(55) NOT NULL,
-    loan_amount DECIMAL(15, 2) NOT NULL,
-    loan_date DATE NOT NULL,
-    loan_status VARCHAR(20) NOT NULL,
-    FOREIGN KEY (account_id) REFERENCES account (id)
-);
-
--- Deposit History Table
--- CREATE TABLE deposit_history (
---     id VARCHAR(55) PRIMARY KEY NOT NULL,
---     account_id VARCHAR(55) NOT NULL,
---     modal_amount DECIMAL(15, 2) NOT NULL,
---     deposit_date DATE NOT NULL,
---     interest_rate DECIMAL(5, 2) NOT NULL,
---     status VARCHAR(20) NOT NULL,
---     FOREIGN KEY (account_id) REFERENCES account (id)
--- );
 
 DROP TABLE deposit_history;
 DROP TABLE loan_history;
