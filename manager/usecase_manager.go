@@ -14,11 +14,17 @@ type UseCaseManager interface {
 	DepositerInterestUseCase() usecase.DepositeInterestUseCase
 	LoanInterestUseCase() usecase.LoanInterestUseCase
 	SaldoUsecase() usecase.SaldoUsecase
+	AppHandlingCostUseCase() usecase.AppHandlingCostUsecase
 }
 
 type useCaseManager struct {
 	repoManager RepoManager
 	ctx         *gin.Context
+}
+
+// AppHandlingCostUseCase implements UseCaseManager.
+func (u *useCaseManager) AppHandlingCostUseCase() usecase.AppHandlingCostUsecase {
+	return usecase.NewAppHandlingCostUseCase(u.repoManager.AppHandlingCostRepo())
 }
 
 // LoanInterestUseCase implements UseCaseManager.

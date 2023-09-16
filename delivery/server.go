@@ -40,6 +40,7 @@ func (s *Server) initControllers() {
 	api.NewDepositeInterestController(s.ucManager.DepositerInterestUseCase(), rg).Route()
 	api.NewLoanInterestController(s.ucManager.LoanInterestUseCase(), rg).Route()
 	api.NewSaldoController(s.ucManager.SaldoUsecase(), rg).Route()
+	api.NewAppHandlingCostController(s.ucManager.AppHandlingCostUseCase(), rg).Route()
 }
 
 func NewServer() *Server {
