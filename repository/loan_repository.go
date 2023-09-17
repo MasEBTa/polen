@@ -2,11 +2,11 @@ package repository
 
 import (
 	"database/sql"
-	"polen/model/dto"
+	"polen/model"
 )
 
 type LoanRepository interface {
-	create(loanReq dto.LoanRequest) error
+	Create(loanReq model.Loan) error
 }
 
 type loanRepository struct {
@@ -14,7 +14,7 @@ type loanRepository struct {
 }
 
 // create implements LoanRepository.
-func (l *loanRepository) create(loan dto.LoanRequest) error {
+func (l *loanRepository) Create(loan model.Loan) error {
 	_, err := l.db.Begin()
 	if err != nil {
 		return err

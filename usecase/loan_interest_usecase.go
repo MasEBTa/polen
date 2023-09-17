@@ -30,8 +30,7 @@ func (l *loanInterestUseCase) CreateNew(payload model.LoanInterest) (int, error)
 	if payload.LoanInterestRate == 0 {
 		return 400, fmt.Errorf("loan interest rate is required")
 	}
-	loan := model.LoanInterest{}
-	if err := l.repo.CreateNew(loan); err != nil {
+	if err := l.repo.CreateNew(payload); err != nil {
 		return 500, err
 	}
 	return 201, nil

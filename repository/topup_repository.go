@@ -284,22 +284,6 @@ func (t *topUpRepository) FindById(id string) (dto.TopUpById, error) {
 	return result, nil
 }
 
-// Update implements TopUp.
-// func (t *topUpRepository) Update(payload model.TopUp) error {
-// 	_, err := t.db.Exec(`UPDATE top_up user_credential_id = $2, top_up_amount = $3, maturity_time = $4, status = $5
-// 	WHERE id = $1`,
-// 		payload.Id,
-// 		payload.UserCredential.Id,
-// 		payload.TopUpAmount,
-// 		payload.MaturityTime,
-// 		payload.Status,
-// 	)
-// 	if err != nil {
-// 		return err
-// 	}
-// 	return nil
-// }
-
 // FindById implements TopUp.
 func (t *topUpRepository) FindByIdUser(id string) (dto.TopUpByUser, error) {
 	userResult := t.db.QueryRow(`

@@ -1,6 +1,7 @@
 package dto
 
 type LoanRequest struct {
+	UserCredentialId   string
 	LoanInterestRateId string
 	LoanHandlingCostId string
 	LoanAmount         int

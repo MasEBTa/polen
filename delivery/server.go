@@ -42,6 +42,8 @@ func (s *Server) initControllers() {
 	api.NewSaldoController(s.ucManager.SaldoUsecase(), rg).Route()
 	api.NewDepositeController(s.ucManager.DepositeUsecase(), rg).Route()
 	api.NewAppHandlingCostController(s.ucManager.AppHandlingCostUseCase(), rg).Route()
+	api.NewLoanController(s.ucManager.LoanUsecase(), rg).Route()
+	api.NewLatePaymentFeeController(s.ucManager.LatePaymentFee(), rg).Route()
 }
 
 func NewServer() *Server {

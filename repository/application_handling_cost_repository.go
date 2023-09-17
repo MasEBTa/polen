@@ -39,10 +39,10 @@ func (a *appHandlingCostRepository) FindById(id string) (model.AppHandlingCost, 
 		id, 
 		name,
 		nominal,
-		unit,
+		unit
 	FROM 
 		application_handling_cost
-	WHERE id =$1`, id)
+	WHERE id = $1`, id)
 	AppHandlingCost := model.AppHandlingCost{}
 	err := row.Scan(
 		&AppHandlingCost.Id,
@@ -65,7 +65,7 @@ func (a *appHandlingCostRepository) Pagging(payload dto.PageRequest) ([]model.Ap
 		id, 
 		name,
 		nominal,
-		unit,
+		unit
 	FROM 
 		application_handling_cost
 	LIMIT 
@@ -116,7 +116,7 @@ func (a *appHandlingCostRepository) Update(payload model.AppHandlingCost) error 
 			application_handling_cost
 		SET 
 			name = $2, 
-			duration = $3,
+			nominal = $3,
 			unit =$4
 		WHERE 
 			id = $1;`,

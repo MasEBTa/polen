@@ -1,6 +1,6 @@
 package model
 
-type AppHandlingCost struct {
+type LatePaymentFee struct {
 	Id      string  `json:"id"`
 	Name    string  `json:"name"`
 	Nominal float64 `json:"nominal"`

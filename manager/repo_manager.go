@@ -11,10 +11,22 @@ type RepoManager interface {
 	SaldoRepo() repository.SaldoRepository
 	DepositeRepo() repository.DepositeRepository
 	AppHandlingCostRepo() repository.AppHandlingCost
+	LatePaymentFee() repository.LatePaymentFee
+	LoanRepo() repository.LoanRepository
 }
 
 type repoManager struct {
 	infraManager InfraManager
+}
+
+// LatePaymentFee implements RepoManager.
+func (r *repoManager) LatePaymentFee() repository.LatePaymentFee {
+	return repository.NewLatePaymentFeeRepository(r.infraManager.Conn())
+}
+
+// LoanRepo implements RepoManager.
+func (r *repoManager) LoanRepo() repository.LoanRepository {
+	return repository.NewLoanRepository(r.infraManager.Conn())
 }
 
 // DepositeRepo implements RepoManager.

@@ -16,11 +16,23 @@ type UseCaseManager interface {
 	SaldoUsecase() usecase.SaldoUsecase
 	DepositeUsecase() usecase.DepositeUseCase
 	AppHandlingCostUseCase() usecase.AppHandlingCostUsecase
+	LatePaymentFee() usecase.LatePaymentFeeUsecase
+	LoanUsecase() usecase.LoanUseCase
 }
 
 type useCaseManager struct {
 	repoManager RepoManager
 	ctx         *gin.Context
+}
+
+// LatePaymentFee implements UseCaseManager.
+func (u *useCaseManager) LatePaymentFee() usecase.LatePaymentFeeUsecase {
+	return usecase.NewLatePaymentFeeUseCase(u.repoManager.LatePaymentFee())
+}
+
+// LoanUsecase implements UseCaseManager.
+func (u *useCaseManager) LoanUsecase() usecase.LoanUseCase {
+	return usecase.NewLoanUseCase(u.repoManager.LoanRepo(), u.LoanInterestUseCase(), u.AppHandlingCostUseCase())
 }
 
 // DepositrUsecase implements UseCaseManager.

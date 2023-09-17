@@ -13,13 +13,13 @@ import (
 	"github.com/google/uuid"
 )
 
-type AppHandlingCostController struct {
-	appHandlingCostUC usecase.AppHandlingCostUsecase
-	rg                *gin.RouterGroup
+type LatePaymentFeeController struct {
+	LatePaymentFeeUC usecase.LatePaymentFeeUsecase
+	rg               *gin.RouterGroup
 }
 
-func (p *AppHandlingCostController) createHandler(c *gin.Context) {
-	var app model.AppHandlingCost
+func (p *LatePaymentFeeController) createHandler(c *gin.Context) {
+	var app model.LatePaymentFee
 	if err := c.ShouldBindJSON(&app); err != nil {
 		c.JSON(400, gin.H{
 			"message": err.Error(),
@@ -48,7 +48,7 @@ func (p *AppHandlingCostController) createHandler(c *gin.Context) {
 		return
 	}
 	app.Id = uuid.NewString()
-	code, err := p.appHandlingCostUC.CreateNew(app)
+	code, err := p.LatePaymentFeeUC.CreateNew(app)
 	if err != nil {
 		c.JSON(code, gin.H{
 			"message": err.Error(),
@@ -62,7 +62,27 @@ func (p *AppHandlingCostController) createHandler(c *gin.Context) {
 	})
 }
 
-func (p *AppHandlingCostController) paggingHandler(c *gin.Context) {
+func (p *LatePaymentFeeController) paggingHandler(c *gin.Context) {
+	role, err := common.GetRole(c)
+	if err != nil {
+		if err.Error() == "unautorized" {
+			c.JSON(401, gin.H{
+				"message": err.Error(),
+			})
+			return
+		}
+		c.JSON(500, gin.H{
+			"message": err.Error(),
+			// "message": "internal server error",
+		})
+		return
+	}
+	if role != "admin" {
+		c.JSON(403, gin.H{
+			"message": "you are not allowed",
+		})
+		return
+	}
 	// Mengambil parameter dari URL
 	page, _ := strconv.Atoi(c.Param("page"))
 	size, _ := strconv.Atoi(c.Param("size"))
@@ -80,7 +100,7 @@ func (p *AppHandlingCostController) paggingHandler(c *gin.Context) {
 		Size: size,
 	}
 
-	model, pagereturn, err := p.appHandlingCostUC.Pagging(payload)
+	model, pagereturn, err := p.LatePaymentFeeUC.Pagging(payload)
 	if err != nil {
 		c.JSON(500, gin.H{
 			"message": err.Error(),
@@ -97,15 +117,15 @@ func (p *AppHandlingCostController) paggingHandler(c *gin.Context) {
 	c.JSON(200, response)
 }
 
-func (p *AppHandlingCostController) Route() {
-	p.rg.POST("/apphandlingcost", middleware.AuthMiddleware(), p.createHandler)
-	p.rg.GET("/apphandlingcost/list/:page/:size", middleware.AuthMiddleware(), p.paggingHandler)
-	p.rg.PUT("/apphandlingcost/", middleware.AuthMiddleware(), p.updateHandler)
-	p.rg.DELETE("/apphandlingcost/:id", middleware.AuthMiddleware(), p.deleteHandler)
+func (p *LatePaymentFeeController) Route() {
+	p.rg.POST("/latepaymentfee", middleware.AuthMiddleware(), p.createHandler)
+	p.rg.GET("/latepaymentfee/list/:page/:size", middleware.AuthMiddleware(), p.paggingHandler)
+	p.rg.PUT("/latepaymentfee/", middleware.AuthMiddleware(), p.updateHandler)
+	p.rg.DELETE("/latepaymentfee/:id", middleware.AuthMiddleware(), p.deleteHandler)
 
 }
 
-func (p *AppHandlingCostController) deleteHandler(c *gin.Context) {
+func (p *LatePaymentFeeController) deleteHandler(c *gin.Context) {
 	id := c.Param("id")
 
 	role, err := common.GetRole(c)
@@ -129,7 +149,7 @@ func (p *AppHandlingCostController) deleteHandler(c *gin.Context) {
 		return
 	}
 
-	err = p.appHandlingCostUC.DeleteById(id)
+	err = p.LatePaymentFeeUC.DeleteById(id)
 	if err != nil {
 		c.JSON(500, gin.H{
 			"message": err.Error(),
@@ -138,12 +158,12 @@ func (p *AppHandlingCostController) deleteHandler(c *gin.Context) {
 	}
 
 	c.JSON(200, gin.H{
-		"message": "successfully delete app handling cost",
+		"message": "successfully delete cost",
 	})
 }
 
-func (p *AppHandlingCostController) updateHandler(c *gin.Context) {
-	var app model.AppHandlingCost
+func (p *LatePaymentFeeController) updateHandler(c *gin.Context) {
+	var app model.LatePaymentFee
 	if err := c.ShouldBindJSON(&app); err != nil {
 		c.JSON(400, gin.H{
 			"message": err.Error(),
@@ -172,7 +192,7 @@ func (p *AppHandlingCostController) updateHandler(c *gin.Context) {
 		return
 	}
 
-	err = p.appHandlingCostUC.Update(app)
+	err = p.LatePaymentFeeUC.Update(app)
 	if err != nil {
 		c.JSON(500, gin.H{
 			"message": err.Error(),
@@ -184,9 +204,9 @@ func (p *AppHandlingCostController) updateHandler(c *gin.Context) {
 	})
 }
 
-func NewAppHandlingCostController(appHandlingCostUC usecase.AppHandlingCostUsecase, rg *gin.RouterGroup) *AppHandlingCostController {
-	return &AppHandlingCostController{
-		appHandlingCostUC: appHandlingCostUC,
-		rg:                rg,
+func NewLatePaymentFeeController(LatePaymentFeeUC usecase.LatePaymentFeeUsecase, rg *gin.RouterGroup) *LatePaymentFeeController {
+	return &LatePaymentFeeController{
+		LatePaymentFeeUC: LatePaymentFeeUC,
+		rg:               rg,
 	}
 }

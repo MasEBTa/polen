@@ -93,7 +93,14 @@ CREATE TABLE application_handling_cost (
     id VARCHAR(55) PRIMARY KEY NOT NULL,
     name VARCHAR(100) NOT NULL UNIQUE,
     nominal INT NOT NULL,
-    unit VARCHAR(100) NOT NULL UNIQUE,
+    unit VARCHAR(100) NOT NULL UNIQUE
+);
+
+CREATE TABLE late_payment_fee (
+    id VARCHAR(55) PRIMARY KEY NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    nominal INT NOT NULL,
+    unit VARCHAR(100) NOT NULL
 );
 
 -- -- Loan Duration Table
@@ -107,7 +114,7 @@ CREATE TABLE application_handling_cost (
 CREATE TABLE loan_duration (
     id SERIAL PRIMARY KEY NOT NULL,
     duration_months INT NOT NULL,
-    loan_interest_rate DECIMAL(5, 2) NOT NULL
+    loan_interest_rate DECIMAL NOT NULL
 );
 
 -- Loan Table
@@ -117,8 +124,7 @@ CREATE TABLE loan (
     loan_amount DECIMAL(15, 2),
     loan_duration INT,
     loan_interest_rate DECIMAL(5, 2) NOT NULL,
-    application_handling_cost_nominal INT NOT NULL,
-    application_handling_cost_unit INT NOT NULL,
+	loan_interest_nominal INT,
     total_amount_of_dept INT NOT NULL,
     loan_date_created DATE,
     status VARCHAR(20),
@@ -128,17 +134,16 @@ CREATE TABLE loan (
 -- Installenment Loan
 CREATE TABLE installenment_loan (
     id VARCHAR(55) PRIMARY KEY NOT NULL,
-    user_credential_id VARCHAR(55) NOT NULL,
     loan_id VARCHAR(55) NOT NULL,
-    isPayed BOOLEAN,
-    payment_installenment INT,
+    is_payed BOOLEAN,
+    payment_installenment_cost INT,
     payment_deadline DATE,
     application_handling_cost_nominal INT NOT NULL,
     application_handling_cost_unit INT NOT NULL,
     total_amount_of_dept INT NOT NULL,
-    loan_date_created DATE,
+    late_payment_fees int,
+    payment_date DATE,
     status VARCHAR(20),
-    FOREIGN KEY (user_credential_id) REFERENCES user_credential (id)
     FOREIGN KEY (loan_id) REFERENCES loan (id)
 );
 

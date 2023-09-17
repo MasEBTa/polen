@@ -7,20 +7,20 @@ import (
 	"polen/repository"
 )
 
-type AppHandlingCostUsecase interface {
-	CreateNew(payload model.AppHandlingCost) (int, error)
-	Pagging(payload dto.PageRequest) ([]model.AppHandlingCost, dto.Paging, error)
-	FindById(id string) (model.AppHandlingCost, error)
-	Update(payload model.AppHandlingCost) error
+type LatePaymentFeeUsecase interface {
+	CreateNew(payload model.LatePaymentFee) (int, error)
+	Pagging(payload dto.PageRequest) ([]model.LatePaymentFee, dto.Paging, error)
+	FindById(id string) (model.LatePaymentFee, error)
+	Update(payload model.LatePaymentFee) error
 	DeleteById(id string) error
 }
 
-type appHandlingCostUseCase struct {
-	repo repository.AppHandlingCost
+type latePaymentFeeUseCase struct {
+	repo repository.LatePaymentFee
 }
 
-// CreateNew implements AppHandlingCostUsecase.
-func (a *appHandlingCostUseCase) CreateNew(payload model.AppHandlingCost) (int, error) {
+// CreateNew implements LatePaymentFeeUsecase.
+func (a *latePaymentFeeUseCase) CreateNew(payload model.LatePaymentFee) (int, error) {
 	if payload.Id == "" {
 		return 400, fmt.Errorf("id is required")
 	}
@@ -45,8 +45,8 @@ func (a *appHandlingCostUseCase) CreateNew(payload model.AppHandlingCost) (int, 
 	return 201, nil
 }
 
-// DeleteById implements AppHandlingCostUsecase.
-func (a *appHandlingCostUseCase) DeleteById(id string) error {
+// DeleteById implements LatePaymentFeeUsecase.
+func (a *latePaymentFeeUseCase) DeleteById(id string) error {
 	app, err := a.repo.FindById(id)
 	if err != nil {
 		return err
@@ -60,18 +60,18 @@ func (a *appHandlingCostUseCase) DeleteById(id string) error {
 	return nil
 }
 
-// FindById implements AppHandlingCostUsecase.
-func (a *appHandlingCostUseCase) FindById(id string) (model.AppHandlingCost, error) {
+// FindById implements LatePaymentFeeUsecase.
+func (a *latePaymentFeeUseCase) FindById(id string) (model.LatePaymentFee, error) {
 	return a.repo.FindById(id)
 }
 
-// Pagging implements AppHandlingCostUsecase.
-func (a *appHandlingCostUseCase) Pagging(payload dto.PageRequest) ([]model.AppHandlingCost, dto.Paging, error) {
+// Pagging implements LatePaymentFeeUsecase.
+func (a *latePaymentFeeUseCase) Pagging(payload dto.PageRequest) ([]model.LatePaymentFee, dto.Paging, error) {
 	return a.repo.Pagging(payload)
 }
 
-// Update implements AppHandlingCostUsecase.
-func (a *appHandlingCostUseCase) Update(payload model.AppHandlingCost) error {
+// Update implements LatePaymentFeeUsecase.
+func (a *latePaymentFeeUseCase) Update(payload model.LatePaymentFee) error {
 	if payload.Id == "" {
 		return fmt.Errorf("id is required")
 	}
@@ -104,8 +104,8 @@ func (a *appHandlingCostUseCase) Update(payload model.AppHandlingCost) error {
 	return nil
 }
 
-func NewAppHandlingCostUseCase(repo repository.AppHandlingCost) AppHandlingCostUsecase {
-	return &appHandlingCostUseCase{
+func NewLatePaymentFeeUseCase(repo repository.LatePaymentFee) LatePaymentFeeUsecase {
+	return &latePaymentFeeUseCase{
 		repo: repo,
 	}
 }

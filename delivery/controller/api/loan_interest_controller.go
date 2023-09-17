@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 	"polen/delivery/middleware"
 	"polen/model"
@@ -10,7 +11,6 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 )
 
 type LoanInterestController struct {
@@ -47,7 +47,8 @@ func (l *LoanInterestController) createHandler(c *gin.Context) {
 		})
 		return
 	}
-	loanInterest.Id = uuid.NewString()
+	loanInterest.Id = common.GenerateID()
+	fmt.Println(loanInterest)
 	code, err := l.loanInterestUC.CreateNew(loanInterest)
 	if err != nil {
 		c.JSON(code, gin.H{
@@ -120,7 +121,7 @@ func (l *LoanInterestController) paggingHandler(c *gin.Context) {
 func (l *LoanInterestController) Route() {
 	l.rg.POST("/loaninterest", middleware.AuthMiddleware(), l.createHandler)
 	l.rg.GET("/loaninterest/list/:page/:size", middleware.AuthMiddleware(), l.paggingHandler)
-	l.rg.PUT("/loaninterest/", middleware.AuthMiddleware(), l.updateHandler)
+	l.rg.PUT("/loaninterest", middleware.AuthMiddleware(), l.updateHandler)
 	l.rg.DELETE("/loaninterest/:id", middleware.AuthMiddleware(), l.deleteHandler)
 
 }

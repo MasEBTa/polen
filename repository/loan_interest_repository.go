@@ -26,8 +26,7 @@ func (l *loanInterestRepository) Pagging(payload dto.PageRequest) ([]model.LoanI
 	query := `SELECT 
 		id, 
 		duration_months,
-		loan_interest_rate,
-		
+		loan_interest_rate
 	FROM 
 		loan_interest
 	LIMIT 
@@ -90,7 +89,7 @@ func (l *loanInterestRepository) FindById(id string) (model.LoanInterest, error)
 	row := l.db.QueryRow(`SELECT 
 		id, 
 		duration_months,
-		loan_interest_rate,
+		loan_interest_rate
 	FROM 
 		loan_interest 
 	WHERE id =$1`, id)

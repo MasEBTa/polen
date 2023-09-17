@@ -1,7 +1,7 @@
 package model
 
 type LoanInterest struct {
-	Id               string
-	DurationMonths   int
-	LoanInterestRate int
+	Id               string  `json:"id"`
+	DurationMonths   int     `json:"duration mounths"`
+	LoanInterestRate float64 `json:"interest rate"`
 }
