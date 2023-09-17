@@ -32,7 +32,7 @@ func (u *useCaseManager) LatePaymentFee() usecase.LatePaymentFeeUsecase {
 
 // LoanUsecase implements UseCaseManager.
 func (u *useCaseManager) LoanUsecase() usecase.LoanUseCase {
-	return usecase.NewLoanUseCase(u.repoManager.LoanRepo(), u.LoanInterestUseCase(), u.AppHandlingCostUseCase())
+	return usecase.NewLoanUseCase(u.repoManager.LoanRepo(), u.LoanInterestUseCase(), u.AppHandlingCostUseCase(), u.LatePaymentFee())
 }
 
 // DepositrUsecase implements UseCaseManager.

@@ -26,7 +26,7 @@ func (r *repoManager) LatePaymentFee() repository.LatePaymentFee {
 
 // LoanRepo implements RepoManager.
 func (r *repoManager) LoanRepo() repository.LoanRepository {
-	return repository.NewLoanRepository(r.infraManager.Conn())
+	return repository.NewLoanRepository(r.infraManager.Conn(), r.BiodataRepo())
 }
 
 // DepositeRepo implements RepoManager.

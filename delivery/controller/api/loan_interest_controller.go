@@ -64,26 +64,6 @@ func (l *LoanInterestController) createHandler(c *gin.Context) {
 }
 
 func (l *LoanInterestController) paggingHandler(c *gin.Context) {
-	role, err := common.GetRole(c)
-	if err != nil {
-		if err.Error() == "unautorized" {
-			c.JSON(401, gin.H{
-				"message": err.Error(),
-			})
-			return
-		}
-		c.JSON(500, gin.H{
-			"message": err.Error(),
-			// "message": "internal server error",
-		})
-		return
-	}
-	if role != "admin" {
-		c.JSON(403, gin.H{
-			"message": "you are not allowed",
-		})
-		return
-	}
 	// Mengambil parameter dari URL
 	page, _ := strconv.Atoi(c.Param("page"))
 	size, _ := strconv.Atoi(c.Param("size"))
