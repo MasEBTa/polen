@@ -33,18 +33,18 @@ func (bio *BiodataUserUseCaseMock) FindByUcId(id string) (dto.BiodataResponse, e
 func (bio *BiodataUserUseCaseMock) AdminUpdate(payload dto.UpdateBioRequest, ctx *gin.Context) (int, error) {
 	args := bio.Called(payload, ctx)
 	if args.Get(1) != nil {
-		return 0, args.Error(1)
+		return args.Int(0), args.Error(1)
 	}
-	return 200, nil
+	return args.Int(0), nil
 }
 
 // UserUpdate implements BiodataUserUseCaseMock.
 func (bio *BiodataUserUseCaseMock) UserUpdate(payload dto.BiodataRequest, ctx *gin.Context) (int, error) {
 	args := bio.Called(payload, ctx)
 	if args.Get(1) != nil {
-		return 0, args.Error(1)
+		return args.Int(0), args.Error(1)
 	}
-	return 200, nil
+	return args.Int(0), nil
 }
 
 // FindUserUpdated implements BiodataUserUseCaseMock.
