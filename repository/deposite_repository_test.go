@@ -71,3 +71,61 @@ func (d *DepositeRepoTestSuite) TestPagging_Failed() {
 	assert.Nil(d.T(), uc)
 	assert.Equal(d.T(), 0, p.TotalRows)
 }
+func (d *DepositeRepoTestSuite) TestCreateDeposite_Success() {
+	d.mockSQL.ExpectBegin()
+	d.mockSQL.ExpectExec(`INSERT INTO deposit`).WillReturnResult(sqlmock.NewResult(1, 1))
+	d.mockSQL.ExpectExec(regexp.QuoteMeta(`UPDATE saldo SET total_saving = total_saving - $1 WHERE user_credential_id = $2;`)).WillReturnResult(sqlmock.NewResult(1, 1))
+	d.mockSQL.ExpectExec(regexp.QuoteMeta(`UPDATE saldo SET total_saving = total_saving + $1 WHERE user_credential_id = 456;`)).WillReturnResult(sqlmock.NewResult(1, 1))
+	d.mockSQL.ExpectCommit()
+	err := d.repo.CreateDeposite(mock.MockDeposite)
+	assert.Nil(d.T(), err)
+	assert.NoError(d.T(), err)
+}
+func (d *DepositeRepoTestSuite) TestCreateDeposite_Failed() {
+	// Begin failed
+	d.mockSQL.ExpectBegin().WillReturnError(errors.New("begin failed"))
+	err := d.repo.CreateDeposite(mock.MockDeposite)
+	assert.Error(d.T(), err)
+	// Insert deposit failed
+	d.mockSQL.ExpectBegin()
+	d.mockSQL.ExpectExec(`INSERT INTO deposit`).WillReturnError(errors.New("insert failed"))
+	err = d.repo.CreateDeposite(mock.MockDeposite)
+	assert.Error(d.T(), err)
+	// Update saldo failed
+	d.mockSQL.ExpectBegin()
+	d.mockSQL.ExpectExec(`INSERT INTO deposit`).WillReturnResult(sqlmock.NewResult(1, 1))
+	d.mockSQL.ExpectExec(regexp.QuoteMeta(`UPDATE saldo SET total_saving = total_saving - $1 WHERE user_credential_id = $2;`)).WillReturnError(errors.New("update failed"))
+	err = d.repo.CreateDeposite(mock.MockDeposite)
+	assert.Error(d.T(), err)
+	// Update saldo failed
+	d.mockSQL.ExpectBegin()
+	d.mockSQL.ExpectExec(`INSERT INTO deposit`).WillReturnResult(sqlmock.NewResult(1, 1))
+	d.mockSQL.ExpectExec(regexp.QuoteMeta(`UPDATE saldo SET total_saving = total_saving - $1 WHERE user_credential_id = $2;`)).WillReturnResult(sqlmock.NewResult(1, 1))
+	d.mockSQL.ExpectExec(regexp.QuoteMeta(`UPDATE saldo SET total_saving = total_saving + $1 WHERE user_credential_id = 456;`)).WillReturnError(errors.New("updated failed"))
+	err = d.repo.CreateDeposite(mock.MockDeposite)
+	assert.Error(d.T(), err)
+}
+func (d *DepositeRepoTestSuite) TestUpdate_Success() {
+	rows := sqlmock.NewRows([]string{"id", "user_credential_id", "tax", "status", "total_return"})
+	for _, hc := range mock.MockDepositesDTO {
+		rows.AddRow(hc.Id, hc.UserCredential.Id, hc.Tax, hc.Status, hc.TotalReturn)
+	}
+	expectedQuery := `SELECT id, user_credential_id, tax, status, total_return FROM deposit WHERE status = true AND maturity_date < now();`
+	d.mockSQL.ExpectQuery(regexp.QuoteMeta(expectedQuery)).WillReturnRows(rows)
+	d.mockSQL.ExpectBegin()
+	d.mockSQL.ExpectExec(regexp.QuoteMeta(`UPDATE deposit SET status = false WHERE id = $1;`)).WillReturnResult(sqlmock.NewResult(1, 1))
+	d.mockSQL.ExpectExec(regexp.QuoteMeta(`UPDATE saldo SET total_saving = total_saving + $1 WHERE user_credential_id = $2;`)).WillReturnResult(sqlmock.NewResult(1, 1))
+	d.mockSQL.ExpectExec(regexp.QuoteMeta(`UPDATE saldo SET total_saving = total_saving - $1 - $2 WHERE user_credential_id = $3;`)).WillReturnResult(sqlmock.NewResult(1, 1))
+	d.mockSQL.ExpectExec(regexp.QuoteMeta(`UPDATE saldo SET total_saving = total_saving + $1 WHERE user_credential_id = $2;`)).WillReturnResult(sqlmock.NewResult(1, 1))
+	d.mockSQL.ExpectCommit()
+	err := d.repo.Update()
+	assert.Nil(d.T(), err)
+}
+
+func (d *DepositeRepoTestSuite) TestUpdate_Failed() {
+	// error select installenment_loan
+	expectedQuery := `SELECT id, user_credential_id, tax, status, total_return FROM deposit WHERE status = true AND maturity_date < now();`
+	d.mockSQL.ExpectQuery(regexp.QuoteMeta(expectedQuery)).WillReturnError(errors.New("error"))
+	err := d.repo.Update()
+	assert.Error(d.T(), err)
+}

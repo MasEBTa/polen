@@ -39,6 +39,13 @@ var MockBiodata = model.BiodataUser{
 	StatusUpdate:   false,
 	Information:    "biodata is not updated",
 }
+var MockSaldoDatas = []dto.Saldo{
+	{
+		Id:    "1",
+		UcId:  "1",
+		Total: 100000,
+	},
+}
 var MockSaldo = model.Saldo{
 	Id:    "1",
 	UcId:  "1",
@@ -280,5 +287,205 @@ var MockDepositeByIdResponse = dto.DepositeByIdResponse{
 		Tax:            10,
 		NetProfit:      2000,
 		TotalReturn:    10000,
+	},
+}
+var MockAppHCDatas = []model.AppHandlingCost{
+	{
+		Id:      "1",
+		Name:    "akbar ismail",
+		Nominal: 10000,
+		Unit:    "Rp",
+	},
+}
+var MockAppHC = model.AppHandlingCost{
+	Id:      "1",
+	Name:    "akbar ismail",
+	Nominal: 10000,
+	Unit:    "Rp",
+}
+var MockLatePFDatas = []model.LatePaymentFee{
+	{
+		Id:      "1",
+		Name:    "akbar ismail",
+		Nominal: 10000,
+		Unit:    "Rp",
+	},
+}
+var MockLatePF = model.LatePaymentFee{
+	Id:      "1",
+	Name:    "akbar ismail",
+	Nominal: 10000,
+	Unit:    "Rp",
+}
+var MockLoanInterest = model.LoanInterest{
+	Id:               "1",
+	DurationMonths:   12,
+	LoanInterestRate: 10,
+}
+var MockLoanInterestDatas = []model.LoanInterest{
+	{
+		Id:               "1",
+		DurationMonths:   12,
+		LoanInterestRate: 10,
+	},
+}
+var MockLoan = model.Loan{
+	Id:                     "1",
+	UserCredentialId:       "1",
+	LoanDateCreate:         time.Now(),
+	LoanAmount:             1,
+	LoanDuration:           12,
+	LoanInterestRate:       10,
+	LoanInterestNominal:    10000,
+	AppHandlingCostNominal: 100,
+	AppHandlingCostUnit:    "Rp",
+	TotalAmountOfDepth:     100,
+	IsPayed:                false,
+	Status:                 "pending",
+}
+var MockInstallLoan = model.InstallenmentLoan{
+
+	Id:                     "1",
+	LoanId:                 "1",
+	IsPayed:                false,
+	PaymentInstallment:     10000,
+	PaymentDeadLine:        time.Now(),
+	TotalAmountOfDepth:     100,
+	LatePaymentFeesNominal: 1000,
+	LatePaymentFeesUnit:    "Rp",
+	LatePaymentDays:        120,
+	LatePaymentFeesTotal:   100000,
+	PaymentDate:            time.Now(),
+	Status:                 "pending",
+	TransferConfirmRecipe:  false,
+	File:                   "",
+}
+var MockInstallLoanDatas = []model.InstallenmentLoan{
+	{
+		Id:                     "1",
+		LoanId:                 "1",
+		IsPayed:                false,
+		PaymentInstallment:     10000,
+		PaymentDeadLine:        time.Now(),
+		TotalAmountOfDepth:     100,
+		LatePaymentFeesNominal: 1000,
+		LatePaymentFeesUnit:    "Rp",
+		LatePaymentDays:        120,
+		LatePaymentFeesTotal:   100000,
+		PaymentDate:            time.Now(),
+		Status:                 "pending",
+		TransferConfirmRecipe:  false,
+		File:                   "",
+	},
+}
+var MockLoanInstallRespons = []dto.LoanInstallenmentResponse{
+	{
+		Id:                 "1",
+		IsPayed:            false,
+		PaymentInstallment: 100,
+		PaymentDeadLine:    time.Now(),
+		TotalAmountOfDepth: 100,
+		LatePayment: dto.LatePayment{
+			LatePaymentFees:      "1000",
+			LatePaymentDays:      30,
+			LatePaymentFeesTotal: 300000,
+		},
+		PaymentDate:           time.Now(),
+		Status:                "pending",
+		TransferConfirmRecipe: false,
+		File:                  "",
+	},
+}
+var MockInstallLoanByIdResp = dto.InstallenmentLoanByIdResponse{
+	UserDeatail: dto.BiodataResponse{
+		Id:          "1",
+		NamaLengkap: "akbar ismail",
+		UserCredential: dto.GetAuthResponse{
+			Id:       "1",
+			Username: "akbaris",
+			Email:    "akbar@gmail.com",
+			Password: "123",
+			Role:     "peminjam",
+			VaNumber: "bfdffbfvfhvf",
+			IsActive: false,
+		},
+		Nik:          "32010",
+		NomorTelepon: "081287743960",
+		Pekerjaan:    "IT",
+		TempatLahir:  "Jakarta",
+		TanggalLahir: "2000-12-12",
+		KodePos:      "1610",
+		IsAglible:    false,
+		StatusUpdate: false,
+		Information:  "Additional",
+	},
+	LoanId: "1",
+	LoanInst: dto.LoanInstallenmentResponse{
+		Id:                 "1",
+		IsPayed:            false,
+		PaymentInstallment: 100,
+		PaymentDeadLine:    time.Now(),
+		TotalAmountOfDepth: 100,
+		LatePayment: dto.LatePayment{
+			LatePaymentFees:      "1000",
+			LatePaymentDays:      30,
+			LatePaymentFeesTotal: 300000,
+		},
+		PaymentDate:           time.Now(),
+		Status:                "pending",
+		TransferConfirmRecipe: false,
+		File:                  "",
+	},
+}
+var MockDeposite = dto.DepositeDto{
+	Id: "1",
+	UserCredential: dto.GetAuthResponse{
+		Id:       "1",
+		Username: "akbaris",
+		Email:    "akbar@gmail.com",
+		Password: "123",
+		Role:     "peminjam",
+		VaNumber: "bfdffbfvfhvf",
+		IsActive: false,
+	},
+	InterestRate: dto.DepositeInterestRequest{
+		Id:             "1",
+		InterestRate:   5,
+		TaxRate:        10,
+		DurationMounth: 12,
+	},
+	DepositeAmount: 100000,
+	MaturityDate:   time.Now(),
+	Status:         false,
+	GrossProfit:    100,
+	Tax:            10,
+	NetProfit:      10,
+	TotalReturn:    110,
+}
+var MockDepositesDTO = []dto.DepositeDto{
+	{
+		Id: "1",
+		UserCredential: dto.GetAuthResponse{
+			Id:       "1",
+			Username: "akbaris",
+			Email:    "akbar@gmail.com",
+			Password: "123",
+			Role:     "peminjam",
+			VaNumber: "bfdffbfvfhvf",
+			IsActive: false,
+		},
+		InterestRate: dto.DepositeInterestRequest{
+			Id:             "1",
+			InterestRate:   5,
+			TaxRate:        10,
+			DurationMounth: 12,
+		},
+		DepositeAmount: 100000,
+		MaturityDate:   time.Now(),
+		Status:         false,
+		GrossProfit:    100,
+		Tax:            10,
+		NetProfit:      10,
+		TotalReturn:    110,
 	},
 }
