@@ -1,7 +1,6 @@
 package usecase
 
 import (
-	"fmt"
 	"polen/model/dto"
 	"polen/repository"
 	"polen/utils/security"
@@ -20,12 +19,12 @@ func (a *authUseCase) Login(payload dto.AuthRequest) (dto.AuthResponse, error) {
 	// Username di db
 	user, err := a.repo.FindByUsername(payload.Username)
 	if err != nil {
-		return dto.AuthResponse{}, fmt.Errorf("unauthorized: invalid credential")
+		return dto.AuthResponse{}, err
 	}
 	// Validasi Password
 	err = security.VerifyPassword(user.Password, payload.Password)
 	if err != nil {
-		return dto.AuthResponse{}, fmt.Errorf("unauthorized: invalid credential")
+		return dto.AuthResponse{}, err
 	}
 
 	// Generate Token

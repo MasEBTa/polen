@@ -1,6 +1,8 @@
 package main
 
-import "polen/delivery"
+import (
+	"polen/delivery"
+)
 
 func main() {
 	delivery.NewServer().Run()

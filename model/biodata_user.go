@@ -12,4 +12,7 @@ type BiodataUser struct {
 	TempatLahir    string
 	TanggalLahir   time.Time
 	KodePos        string
+	IsAglible      bool
+	StatusUpdate   bool
+	Information    string
 }
