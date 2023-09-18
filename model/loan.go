@@ -7,20 +7,29 @@ type Loan struct {
 	UserCredentialId       string
 	LoanDateCreate         time.Time
 	LoanAmount             int
+	LoanDuration           int
 	LoanInterestRate       float64
-	AppHandlingCostNominal int
+	LoanInterestNominal    int
+	AppHandlingCostNominal float64
 	AppHandlingCostUnit    string
 	TotalAmountOfDepth     int
-	Status                 bool
+	IsPayed                bool
+	Status                 string
 }
 
 type InstallenmentLoan struct {
-	Id                 string
-	UserCredId         string
-	LoanId             string
-	IsPayed            bool
-	PaymentInstallment int
-	PaymentDeadLine    time.Time
-	LatePaymentFees    int
-	LatePaymentDate    time.Time
+	Id                     string
+	LoanId                 string
+	IsPayed                bool
+	PaymentInstallment     int
+	PaymentDeadLine        time.Time
+	TotalAmountOfDepth     int
+	LatePaymentFeesNominal float64
+	LatePaymentFeesUnit    string
+	LatePaymentDays        int
+	LatePaymentFeesTotal   int
+	PaymentDate            time.Time
+	Status                 string
+	TransferConfirmRecipe  bool
+	File                   string
 }

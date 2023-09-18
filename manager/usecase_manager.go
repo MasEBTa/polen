@@ -12,8 +12,12 @@ type UseCaseManager interface {
 	BiodataUserUseCase() usecase.BiodataUserUseCase
 	TopUpUsecase() usecase.TopUpUseCase
 	DepositerInterestUseCase() usecase.DepositeInterestUseCase
+	LoanInterestUseCase() usecase.LoanInterestUseCase
 	SaldoUsecase() usecase.SaldoUsecase
 	DepositeUsecase() usecase.DepositeUseCase
+	AppHandlingCostUseCase() usecase.AppHandlingCostUsecase
+	LatePaymentFee() usecase.LatePaymentFeeUsecase
+	LoanUsecase() usecase.LoanUseCase
 }
 
 type useCaseManager struct {
@@ -21,9 +25,30 @@ type useCaseManager struct {
 	ctx         *gin.Context
 }
 
+// LatePaymentFee implements UseCaseManager.
+func (u *useCaseManager) LatePaymentFee() usecase.LatePaymentFeeUsecase {
+	return usecase.NewLatePaymentFeeUseCase(u.repoManager.LatePaymentFee())
+}
+
+// LoanUsecase implements UseCaseManager.
+func (u *useCaseManager) LoanUsecase() usecase.LoanUseCase {
+	return usecase.NewLoanUseCase(u.repoManager.LoanRepo(), u.LoanInterestUseCase(), u.AppHandlingCostUseCase(), u.LatePaymentFee())
+}
+
 // DepositrUsecase implements UseCaseManager.
 func (u *useCaseManager) DepositeUsecase() usecase.DepositeUseCase {
 	return usecase.NewDepositeUseCase(u.repoManager.DepositeRepo(), u.DepositerInterestUseCase(), u.SaldoUsecase())
+}
+
+// AppHandlingCostUseCase implements UseCaseManager.
+func (u *useCaseManager) AppHandlingCostUseCase() usecase.AppHandlingCostUsecase {
+	return usecase.NewAppHandlingCostUseCase(u.repoManager.AppHandlingCostRepo())
+}
+
+// LoanInterestUseCase implements UseCaseManager.
+func (u *useCaseManager) LoanInterestUseCase() usecase.LoanInterestUseCase {
+	return usecase.NewLoanInterestUseCase(u.repoManager.LoanInterestRepo())
+
 }
 
 // SaldoUsecase implements UseCaseManager.
@@ -59,5 +84,6 @@ func (u *useCaseManager) UserUseCase() usecase.UserUseCase {
 func NewUsecaseManager(repoManager RepoManager) UseCaseManager {
 	return &useCaseManager{
 		repoManager: repoManager,
+		ctx:         &gin.Context{},
 	}
 }
