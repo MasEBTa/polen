@@ -7,6 +7,11 @@ type AuthRequest struct {
 	Role     string `json:"role"`
 }
 
+type AuthLoginRequest struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
 type AuthResponse struct {
 	Username string `json:"username"`
 	Token    string `json:"token"`

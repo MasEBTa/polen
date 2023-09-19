@@ -7,7 +7,7 @@ import (
 )
 
 type AuthUseCase interface {
-	Login(payload dto.AuthRequest) (dto.AuthResponse, error)
+	Login(payload dto.AuthLoginRequest) (dto.AuthResponse, error)
 }
 
 type authUseCase struct {
@@ -15,7 +15,7 @@ type authUseCase struct {
 }
 
 // Login implements AuthUseCase.
-func (a *authUseCase) Login(payload dto.AuthRequest) (dto.AuthResponse, error) {
+func (a *authUseCase) Login(payload dto.AuthLoginRequest) (dto.AuthResponse, error) {
 	// Username di db
 	user, err := a.repo.FindByUsername(payload.Username)
 	if err != nil {

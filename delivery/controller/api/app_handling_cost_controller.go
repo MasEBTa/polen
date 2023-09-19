@@ -18,6 +18,14 @@ type AppHandlingCostController struct {
 	rg                *gin.RouterGroup
 }
 
+// @Summary New Handling Cost
+// @Description Create New Apps Handling Cost Data
+// @Tags Handling Cost
+// @Accept json
+// @Produce json
+// @Param request body dto.AuthLoginRequest true "Data login user"
+// @Success 200 {object} dto.ResponseData
+// @Router /auth/login [post]
 func (p *AppHandlingCostController) createHandler(c *gin.Context) {
 	var app model.AppHandlingCost
 	if err := c.ShouldBindJSON(&app); err != nil {
