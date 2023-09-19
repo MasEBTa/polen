@@ -117,6 +117,15 @@ definitions:
       va number:
         type: string
     type: object
+  dto.LatePaymentFeeReq:
+    properties:
+      name:
+        type: string
+      nominal:
+        type: number
+      unit:
+        type: string
+    type: object
   dto.Paging:
     properties:
       Page:
@@ -516,7 +525,7 @@ paths:
             $ref: '#/definitions/dto.ResponseData'
       summary: get deposito by id
       tags:
-      - deposito
+      - Deposito
   /deposite/list/{page}/{size}:
     get:
       consumes:
@@ -592,7 +601,7 @@ paths:
             $ref: '#/definitions/dto.ResponseData'
       summary: get detail deposito user
       tags:
-      - deposito
+      - Deposito
   /deposite/user/{id}:
     get:
       consumes:
@@ -619,7 +628,7 @@ paths:
             $ref: '#/definitions/dto.ResponseData'
       summary: get deposito by id user
       tags:
-      - deposito
+      - Deposito
   /depositeinterest:
     post:
       consumes:
@@ -734,6 +743,66 @@ paths:
       summary: Get all
       tags:
       - deposito interest
+  /latepaymentfee:
+    post:
+      consumes:
+      - application/json
+      description: create new data late fee payment
+      parameters:
+      - default: Bearer <token>
+        description: Bearer Token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Data late fee
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.LatePaymentFeeReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ResponseData'
+      summary: new
+      tags:
+      - late fee payment
+  /latepaymentfee/list/{page}/{size}:
+    get:
+      consumes:
+      - application/json
+      description: get all data late fee payment
+      parameters:
+      - default: Bearer <token>
+        description: Bearer Token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: page of pagination
+        in: path
+        name: page
+        required: true
+        type: integer
+      - description: size of pagination
+        in: path
+        name: size
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ResponsePaging'
+      summary: get all
+      tags:
+      - late fee payment
   /user/{page}/{size}:
     get:
       consumes:

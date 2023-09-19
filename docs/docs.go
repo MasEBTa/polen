@@ -581,7 +581,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "deposito"
+                    "Deposito"
                 ],
                 "summary": "get detail deposito user",
                 "parameters": [
@@ -614,7 +614,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "deposito"
+                    "Deposito"
                 ],
                 "summary": "get deposito by id user",
                 "parameters": [
@@ -654,7 +654,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "deposito"
+                    "Deposito"
                 ],
                 "summary": "get deposito by id",
                 "parameters": [
@@ -848,6 +848,95 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/dto.ResponseMessage"
+                        }
+                    }
+                }
+            }
+        },
+        "/latepaymentfee": {
+            "post": {
+                "description": "create new data late fee payment",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "late fee payment"
+                ],
+                "summary": "new",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003ctoken\u003e",
+                        "description": "Bearer Token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Data late fee",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.LatePaymentFeeReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/latepaymentfee/list/{page}/{size}": {
+            "get": {
+                "description": "get all data late fee payment",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "late fee payment"
+                ],
+                "summary": "get all",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003ctoken\u003e",
+                        "description": "Bearer Token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "page of pagination",
+                        "name": "page",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "size of pagination",
+                        "name": "size",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponsePaging"
                         }
                     }
                 }
@@ -1078,6 +1167,20 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "va number": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.LatePaymentFeeReq": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "nominal": {
+                    "type": "number"
+                },
+                "unit": {
                     "type": "string"
                 }
             }
