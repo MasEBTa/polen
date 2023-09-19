@@ -29,7 +29,7 @@ func TestAuthUseCaseSuite(t *testing.T) {
 
 func (a *AuthUseCaseTestSuite) TestLogin_UsernameInvalid() {
 	a.urm.On("FindByUsername", "akbr").Return(model.UserCredential{}, errors.New("unauthorized: invalid credential"))
-	ar, err := a.auc.Login(dto.AuthRequest{Username: "akbr"})
+	ar, err := a.auc.Login(dto.AuthLoginRequest{Username: "akbr"})
 	assert.Error(a.T(), err)
 	assert.NotNil(a.T(), err)
 	assert.Equal(a.T(), dto.AuthResponse{}, ar)
@@ -40,10 +40,9 @@ func (a *AuthUseCaseTestSuite) TestLogin_PasswordInvalid() {
 		Password: "123",
 		Role:     "peminjam",
 	}
-	mockAuthRequest := dto.AuthRequest{
+	mockAuthRequest := dto.AuthLoginRequest{
 		Username: "akbar",
 		Password: "123",
-		Role:     "peminjam",
 	}
 	a.urm.On("FindByUsername", mockUserCredential.Username).Return(mockUserCredential, nil)
 	err := security.VerifyPassword(mockUserCredential.Password, "123")
