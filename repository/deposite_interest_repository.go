@@ -20,10 +20,6 @@ type depositeInterest struct {
 }
 
 func (d *depositeInterest) Pagging(payload dto.PageRequest) ([]dto.DepositeInterestRequest, dto.Paging, error) {
-	// limit Size, Offset (page - 1) * size
-	if payload.Page < 0 {
-		payload.Page = 1
-	}
 	query := `SELECT 
 		id, 
 		interest_rate,

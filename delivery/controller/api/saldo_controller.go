@@ -15,6 +15,16 @@ type SaldoController struct {
 	rg      *gin.RouterGroup
 }
 
+// @Summary get all
+// @Description get all data saldo
+// @Tags saldo
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer Token" default(Bearer <token>)
+// @Param page path int true "page of pagination"
+// @Param size path int true "size of pagination"
+// @Success 200 {object} dto.ResponsePaging
+// @Router /saldo/list/{page}/{size} [GET]
 func (s *SaldoController) paggingHandler(c *gin.Context) {
 	role, err := common.GetRole(c)
 	if err != nil {
@@ -61,15 +71,23 @@ func (s *SaldoController) paggingHandler(c *gin.Context) {
 		return
 	}
 
-	response := gin.H{
-		"message": "Success getting data",
-		"data":    model,
-		"paging":  pagereturn,
+	response := dto.ResponsePaging{
+		Message: "Success getting data",
+		Data:    model,
+		Paging:  pagereturn,
 	}
 
 	c.JSON(200, response)
 }
 
+// @Summary get by id installenment
+// @Description get by id data loan
+// @Tags saldo
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer Token" default(Bearer <token>)
+// @Success 200 {object} dto.ResponseData
+// @Router /saldo [GET]
 func (s *SaldoController) showSaldoUser(c *gin.Context) {
 	ucid, err := common.GetId(c)
 	if err != nil {
@@ -94,14 +112,23 @@ func (s *SaldoController) showSaldoUser(c *gin.Context) {
 		return
 	}
 
-	response := gin.H{
-		"message": "Success getting data",
-		"data":    model,
+	response := dto.ResponseData{
+		Message: "Success getting data",
+		Data:    model,
 	}
 
 	c.JSON(200, response)
 }
 
+// @Summary get by id installenment
+// @Description get by id data loan
+// @Tags saldo
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer Token" default(Bearer <token>)
+// @Param id path int true "id"
+// @Success 200 {object} dto.ResponseData
+// @Router /saldo/{id} [GET]
 func (s *SaldoController) showSaldoById(c *gin.Context) {
 	role, err := common.GetRole(c)
 	if err != nil {
@@ -134,9 +161,9 @@ func (s *SaldoController) showSaldoById(c *gin.Context) {
 		return
 	}
 
-	response := gin.H{
-		"message": "Success getting data",
-		"data":    model,
+	response := dto.ResponseData{
+		Message: "Success getting data",
+		Data:    model,
 	}
 
 	c.JSON(200, response)

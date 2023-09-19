@@ -14,6 +14,16 @@ type TopUpUser struct {
 	File                  string
 }
 
+type TopUpReq struct {
+	TopUpAmount int `json:"top up amount"`
+}
+
+type TopUpupdate struct {
+	Id       string `json:"id"`
+	Accepted bool   `json:"accepted status"`
+	Status   string `json:"information status"`
+}
+
 type TopUpByUser struct {
 	UserCredential GetAuthResponse `json:"user credential"`
 	UserBio        BiodataRequest  `json:"user biodata"`

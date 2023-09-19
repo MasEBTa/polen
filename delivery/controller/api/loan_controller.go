@@ -19,6 +19,15 @@ type LoanController struct {
 	rg     *gin.RouterGroup
 }
 
+// @Summary new
+// @Description create new data loan
+// @Tags loan
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer Token" default(Bearer <token>)
+// @Param request body dto.LoanReq true "Data deposite interest"
+// @Success 200 {object} dto.ResponseMessage
+// @Router /loan [POST]
 func (l *LoanController) createHandler(c *gin.Context) {
 	role, err := common.GetRole(c)
 	if err != nil {
@@ -54,9 +63,14 @@ func (l *LoanController) createHandler(c *gin.Context) {
 		})
 		return
 	}
+	var data dto.LoanReq
 	var payload dto.LoanRequest
+	payload.LoanAmount = data.LoanAmount
+	payload.LoanHandlingCostId = data.LoanHandlingCostId
+	payload.LoanInterestRateId = data.LoanInterestRateId
+	payload.LoanLatePaymentFessId = data.LoanLatePaymentFessId
 	payload.UserCredentialId = ucid
-	if err := c.ShouldBindJSON(&payload); err != nil {
+	if err := c.ShouldBindJSON(&data); err != nil {
 		c.JSON(400, gin.H{
 			"message": err.Error(),
 		})
@@ -69,11 +83,21 @@ func (l *LoanController) createHandler(c *gin.Context) {
 		})
 		return
 	}
-	c.JSON(200, gin.H{
-		"message": "succes input data",
-	})
+	result := dto.ResponseMessage{
+		Message: "success creating data",
+	}
+	c.JSON(http.StatusCreated, result)
 }
 
+// @Summary find by id installenment
+// @Description find by id data loan
+// @Tags installenment loan
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer Token" default(Bearer <token>)
+// @Param id path string true "id"
+// @Success 200 {object} dto.ResponseMessage
+// @Router /loan/installment/:id [GET]
 func (l *LoanController) findById(c *gin.Context) {
 	id := c.Param("id")
 
@@ -85,12 +109,22 @@ func (l *LoanController) findById(c *gin.Context) {
 		return
 	}
 
-	c.JSON(500, gin.H{
-		"message": "Success getting data",
-		"data":    data,
-	})
+	result := dto.ResponseData{
+		Message: "Success getting data",
+		Data:    data,
+	}
+	c.JSON(200, result)
 }
 
+// @Summary find by id loan
+// @Description find by id data loan
+// @Tags loan
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer Token" default(Bearer <token>)
+// @Param id path string true "id"
+// @Success 200 {object} dto.ResponseMessage
+// @Router /loan/{id} [GET]
 func (l *LoanController) loanid(c *gin.Context) {
 	id := c.Param("id")
 
@@ -102,12 +136,23 @@ func (l *LoanController) loanid(c *gin.Context) {
 		return
 	}
 
-	c.JSON(500, gin.H{
-		"message": "Success getting data",
-		"data":    data,
-	})
+	response := dto.ResponseData{
+		Message: "Success getting data",
+		Data:    data,
+	}
+	c.JSON(200, response)
 }
 
+// @Summary upload
+// @Description upload recipe
+// @Tags loan
+// @Accept mpfd
+// @Produce json
+// @Param Authorization header string true "Bearer Token" default(Bearer <token>)
+// @Param file formData file true "File to upload"
+// @Param id formData string true "ID parameter"
+// @Success 200 {object} dto.ResponseMessage
+// @Router /loan/pay [POST]
 func (t *LoanController) Upload(c *gin.Context) {
 	// ambil role
 	role, err := common.GetRole(c)
@@ -186,9 +231,20 @@ func (t *LoanController) Upload(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "success uploaded data"})
+	response := dto.ResponseMessage{
+		Message: "Success upload data",
+	}
+	c.JSON(200, response)
 }
 
+// @Summary get data upoaded
+// @Description upload recipe
+// @Tags loan
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer Token" default(Bearer <token>)
+// @Success 200 {object} dto.ResponseMessage
+// @Router /loan/updatedpayment [GET]
 func (t *LoanController) GetUploaded(c *gin.Context) {
 	// ambil role
 	role, err := common.GetRole(c)
@@ -221,12 +277,22 @@ func (t *LoanController) GetUploaded(c *gin.Context) {
 		})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{
-		"message": "success grtting data",
-		"data":    data,
-	})
+	response := dto.ResponseData{
+		Message: "success grtting data",
+		Data:    data,
+	}
+	c.JSON(http.StatusOK, response)
 }
 
+// @Summary confirm
+// @Description confirm data uploaded
+// @Tags loan
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer Token" default(Bearer <token>)
+// @Param request body dto.Confirm true "Data late fee"
+// @Success 200 {object} dto.ResponseMessage
+// @Router /loan/confirm [PUT]
 func (t *LoanController) confirm(c *gin.Context) {
 	role, err := common.GetRole(c)
 	if err != nil {
@@ -248,7 +314,7 @@ func (t *LoanController) confirm(c *gin.Context) {
 		})
 		return
 	}
-	var payload dto.LoanInstallenmentResponse
+	var payload dto.Confirm
 	if err := c.ShouldBindJSON(&payload); err != nil {
 		c.JSON(400, gin.H{
 			"message": err.Error(),
@@ -268,11 +334,20 @@ func (t *LoanController) confirm(c *gin.Context) {
 		})
 		return
 	}
-	c.JSON(200, gin.H{
-		"message": "updated",
-	})
+	response := dto.ResponseMessage{
+		Message: "updated",
+	}
+	c.JSON(200, response)
 }
 
+// @Summary update
+// @Description create update data late fee
+// @Tags loan
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer Token" default(Bearer <token>)
+// @Success 200 {object} dto.ResponseMessage
+// @Router /loan/updatelatefee [GET]
 func (t *LoanController) latefee(c *gin.Context) {
 	role, err := common.GetRole(c)
 	if err != nil {
@@ -301,9 +376,10 @@ func (t *LoanController) latefee(c *gin.Context) {
 		})
 		return
 	}
-	c.JSON(200, gin.H{
-		"message": "updated",
-	})
+	response := dto.ResponseMessage{
+		Message: "updated",
+	}
+	c.JSON(200, response)
 }
 
 func (l *LoanController) Route() {

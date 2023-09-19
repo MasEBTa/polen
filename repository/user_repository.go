@@ -22,10 +22,6 @@ type userRepository struct {
 
 // pagging implements UserRepository.
 func (u *userRepository) Pagging(payload dto.PageRequest) ([]model.UserCredential, dto.Paging, error) {
-	// limit Size, Offset (page - 1) * size
-	if payload.Page < 0 {
-		payload.Page = 1
-	}
 	query := `SELECT id, username, email, role, virtual_account_number, is_active FROM user_credential LIMIT $2 OFFSET $1`
 	rows, err := u.db.Query(query, (payload.Page-1)*payload.Page, payload.Size)
 	if err != nil {
