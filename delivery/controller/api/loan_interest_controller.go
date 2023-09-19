@@ -18,14 +18,26 @@ type LoanInterestController struct {
 	rg             *gin.RouterGroup
 }
 
+// @Summary new
+// @Description create new data loan interest
+// @Tags loan interest
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer Token" default(Bearer <token>)
+// @Param request body dto.LoanInterest true "Data loan interest"
+// @Success 200 {object} dto.ResponseData
+// @Router /loaninterest [POST]
 func (l *LoanInterestController) createHandler(c *gin.Context) {
+	var data dto.LoanInterest
 	var loanInterest model.LoanInterest
-	if err := c.ShouldBindJSON(&loanInterest); err != nil {
+	if err := c.ShouldBindJSON(&data); err != nil {
 		c.JSON(400, gin.H{
 			"message": err.Error(),
 		})
 		return
 	}
+	loanInterest.LoanInterestRate = data.LoanInterestRate
+	loanInterest.DurationMonths = data.DurationMonths
 
 	role, err := common.GetRole(c)
 	if err != nil {
@@ -57,12 +69,23 @@ func (l *LoanInterestController) createHandler(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{
-		"message": "success creating data",
-		"data":    loanInterest,
-	})
+	respone := dto.ResponseData{
+		Message: "success creating data",
+		Data:    loanInterest,
+	}
+	c.JSON(http.StatusCreated, respone)
 }
 
+// @Summary get all
+// @Description get all data loan interest
+// @Tags loan interest
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer Token" default(Bearer <token>)
+// @Param page path int true "page of pagination"
+// @Param size path int true "size of pagination"
+// @Success 200 {object} dto.ResponsePaging
+// @Router /loaninterest/list/{page}/{size} [GET]
 func (l *LoanInterestController) paggingHandler(c *gin.Context) {
 	// Mengambil parameter dari URL
 	page, _ := strconv.Atoi(c.Param("page"))
@@ -89,10 +112,10 @@ func (l *LoanInterestController) paggingHandler(c *gin.Context) {
 		return
 	}
 
-	response := gin.H{
-		"message": "Success getting data",
-		"data":    model,
-		"paging":  pagereturn,
+	response := dto.ResponsePaging{
+		Message: "Success getting data",
+		Data:    model,
+		Paging:  pagereturn,
 	}
 
 	c.JSON(200, response)
@@ -106,6 +129,15 @@ func (l *LoanInterestController) Route() {
 
 }
 
+// @Summary get all
+// @Description get all data loan interest
+// @Tags loan interest
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer Token" default(Bearer <token>)
+// @Param id path string true "id"
+// @Success 200 {object} dto.ResponsePaging
+// @Router /loaninterest/{id} [DELETE]
 func (l *LoanInterestController) deleteHandler(c *gin.Context) {
 	id := c.Param("id")
 
@@ -138,11 +170,21 @@ func (l *LoanInterestController) deleteHandler(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, gin.H{
-		"message": "successfully delete loan interest",
-	})
+	respone := dto.ResponseMessage{
+		Message: "successfully delete loan interest",
+	}
+	c.JSON(http.StatusCreated, respone)
 }
 
+// @Summary update
+// @Description create update data loan interest
+// @Tags loan interest
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer Token" default(Bearer <token>)
+// @Param request body model.LoanInterest true "Data loan interest"
+// @Success 200 {object} dto.ResponseMessage
+// @Router /loaninterest [PUT]
 func (l *LoanInterestController) updateHandler(c *gin.Context) {
 	var loan model.LoanInterest
 	if err := c.ShouldBindJSON(&loan); err != nil {
@@ -180,9 +222,10 @@ func (l *LoanInterestController) updateHandler(c *gin.Context) {
 		})
 		return
 	}
-	c.JSON(200, gin.H{
-		"message": "successfully update",
-	})
+	respone := dto.ResponseMessage{
+		Message: "success update data",
+	}
+	c.JSON(http.StatusCreated, respone)
 }
 
 func NewLoanInterestController(loanInterestUC usecase.LoanInterestUseCase, rg *gin.RouterGroup) *LoanInterestController {

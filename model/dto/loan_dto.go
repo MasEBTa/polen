@@ -10,6 +10,19 @@ type LoanRequest struct {
 	LoanAmount            int    `json:"loan amount"`
 }
 
+type LoanReq struct {
+	LoanInterestRateId    string `json:"loan interest rate id"`
+	LoanHandlingCostId    string `json:"loan handling cost id"`
+	LoanLatePaymentFessId string `json:"loan late payment fess id"`
+	LoanAmount            int    `json:"loan amount"`
+}
+
+type Confirm struct {
+	Id      string `json:"id"`
+	IsPayed bool   `json:"is payed"`
+	Status  string `json:"status"`
+}
+
 type LoanInstallenmentResponse struct {
 	Id                    string      `json:"id"`
 	IsPayed               bool        `json:"is payed"`

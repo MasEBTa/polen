@@ -129,6 +129,15 @@ func (p *LatePaymentFeeController) Route() {
 
 }
 
+// @Summary delete
+// @Description delete data late fee payment
+// @Tags late fee payment
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer Token" default(Bearer <token>)
+// @Param id path string true "id"
+// @Success 200 {object} dto.ResponseMessage
+// @Router /latepaymentfee/{id} [DELETE]
 func (p *LatePaymentFeeController) deleteHandler(c *gin.Context) {
 	id := c.Param("id")
 
@@ -161,11 +170,21 @@ func (p *LatePaymentFeeController) deleteHandler(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, gin.H{
-		"message": "successfully delete cost",
-	})
+	result := dto.ResponseMessage{
+		Message: "success creating data",
+	}
+	c.JSON(http.StatusCreated, result)
 }
 
+// @Summary update
+// @Description update data late fee payment
+// @Tags late fee payment
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer Token" default(Bearer <token>)
+// @Param request body model.LatePaymentFee true "Data late fee"
+// @Success 200 {object} dto.ResponseMessage
+// @Router /latepaymentfee [PUT]
 func (p *LatePaymentFeeController) updateHandler(c *gin.Context) {
 	var app model.LatePaymentFee
 	if err := c.ShouldBindJSON(&app); err != nil {
@@ -203,9 +222,10 @@ func (p *LatePaymentFeeController) updateHandler(c *gin.Context) {
 		})
 		return
 	}
-	c.JSON(200, gin.H{
-		"message": "successfully update",
-	})
+	result := dto.ResponseMessage{
+		Message: "success creating data",
+	}
+	c.JSON(http.StatusCreated, result)
 }
 
 func NewLatePaymentFeeController(LatePaymentFeeUC usecase.LatePaymentFeeUsecase, rg *gin.RouterGroup) *LatePaymentFeeController {
