@@ -15,6 +15,10 @@ var MockUserCred = model.UserCredential{
 	Role:     "borrower",
 	IsActive: true,
 }
+var MockAuthLoginReq = dto.AuthLoginRequest{
+	Username: "akbaris",
+	Password: "password",
+}
 var MockAuthReq = dto.AuthRequest{
 	Username: "akbaris",
 	Email:    "akbar@gmail.com",
