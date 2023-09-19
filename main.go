@@ -4,7 +4,7 @@ import (
 	"polen/delivery"
 )
 
-// @title           Laundry APps
+// @title           Laundry Apps
 // @version         1.0
 
 // @BasePath  /api/v1

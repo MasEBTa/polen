@@ -71,6 +71,35 @@ definitions:
       user credential:
         $ref: '#/definitions/dto.GetAuthResponse'
     type: object
+  dto.DepositeInterestReq:
+    properties:
+      duration mounth:
+        type: integer
+      interest rate:
+        type: number
+      tax rate:
+        type: number
+    type: object
+  dto.DepositeInterestRequest:
+    properties:
+      duration mounth:
+        type: integer
+      id:
+        type: string
+      interest rate:
+        type: number
+      tax rate:
+        type: number
+    type: object
+  dto.DepositeRequest:
+    properties:
+      deposite amount:
+        type: integer
+      interest rate id:
+        type: string
+      user id:
+        type: string
+    type: object
   dto.GetAuthResponse:
     properties:
       activated:
@@ -140,7 +169,7 @@ definitions:
     type: object
 info:
   contact: {}
-  title: Laundry APps
+  title: Laundry Apps
   version: "1.0"
 paths:
   /apphandlingcost:
@@ -214,7 +243,7 @@ paths:
         in: path
         name: id
         required: true
-        type: integer
+        type: string
       produces:
       - application/json
       responses:
@@ -229,7 +258,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: Create New Apps Handling Cost Data
+      description: get all Apps Handling Cost Data
       parameters:
       - default: Bearer <token>
         description: Bearer Token
@@ -433,6 +462,278 @@ paths:
       summary: Find User Updated
       tags:
       - Biodata
+  /deposite:
+    post:
+      consumes:
+      - application/json
+      description: Create New deposito Data
+      parameters:
+      - default: Bearer <token>
+        description: Bearer Token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Data deposito
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.DepositeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ResponseData'
+      summary: New deposito
+      tags:
+      - Deposito
+  /deposite/{id}:
+    get:
+      consumes:
+      - application/json
+      description: get deposito by id deposito
+      parameters:
+      - default: Bearer <token>
+        description: Bearer Token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Id deposito
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ResponseData'
+      summary: get deposito by id
+      tags:
+      - deposito
+  /deposite/list/{page}/{size}:
+    get:
+      consumes:
+      - application/json
+      description: get all data deposito
+      parameters:
+      - default: Bearer <token>
+        description: Bearer Token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: page of pagination
+        in: path
+        name: page
+        required: true
+        type: integer
+      - description: size of pagination
+        in: path
+        name: size
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ResponsePaging'
+      summary: Get all
+      tags:
+      - Deposito
+  /deposite/update:
+    put:
+      consumes:
+      - application/json
+      description: update data deposito
+      parameters:
+      - default: Bearer <token>
+        description: Bearer Token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ResponseData'
+      summary: update
+      tags:
+      - Deposito
+  /deposite/user:
+    get:
+      consumes:
+      - application/json
+      description: Create New deposito Data
+      parameters:
+      - default: Bearer <token>
+        description: Bearer Token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ResponseData'
+      summary: get detail deposito user
+      tags:
+      - deposito
+  /deposite/user/{id}:
+    get:
+      consumes:
+      - application/json
+      description: get deposito by id user
+      parameters:
+      - default: Bearer <token>
+        description: Bearer Token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Id ucredential user
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ResponseData'
+      summary: get deposito by id user
+      tags:
+      - deposito
+  /depositeinterest:
+    post:
+      consumes:
+      - application/json
+      description: create new data deposito interest
+      parameters:
+      - default: Bearer <token>
+        description: Bearer Token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Data deposite interest
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.DepositeInterestReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ResponseData'
+      summary: new
+      tags:
+      - deposito interest
+    put:
+      consumes:
+      - application/json
+      description: update data deposito interest
+      parameters:
+      - default: Bearer <token>
+        description: Bearer Token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Data deposite interest
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.DepositeInterestRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ResponseData'
+      summary: update
+      tags:
+      - deposito interest
+  /depositeinterest/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete data deposito interest
+      parameters:
+      - default: Bearer <token>
+        description: Bearer Token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ResponseMessage'
+      summary: delete
+      tags:
+      - deposito interest
+  /depositeinterest/list/{page}/{size}:
+    get:
+      consumes:
+      - application/json
+      description: get all data deposito interest
+      parameters:
+      - default: Bearer <token>
+        description: Bearer Token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: page of pagination
+        in: path
+        name: page
+        required: true
+        type: integer
+      - description: size of pagination
+        in: path
+        name: size
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ResponsePaging'
+      summary: Get all
+      tags:
+      - deposito interest
   /user/{page}/{size}:
     get:
       consumes:

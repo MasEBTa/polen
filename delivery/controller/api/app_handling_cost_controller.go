@@ -78,7 +78,7 @@ func (p *AppHandlingCostController) createHandler(c *gin.Context) {
 }
 
 // @Summary Get all Handling Cost
-// @Description Create New Apps Handling Cost Data
+// @Description get all Apps Handling Cost Data
 // @Tags Handling Cost
 // @Accept json
 // @Produce json
@@ -113,10 +113,10 @@ func (p *AppHandlingCostController) paggingHandler(c *gin.Context) {
 		return
 	}
 
-	response := gin.H{
-		"message": "Success getting data",
-		"data":    model,
-		"paging":  pagereturn,
+	response := dto.ResponsePaging{
+		Message: "Success getting data",
+		Data:    model,
+		Paging:  pagereturn,
 	}
 
 	c.JSON(200, response)
@@ -136,7 +136,7 @@ func (p *AppHandlingCostController) Route() {
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "Bearer Token" default(Bearer <token>)
-// @Param id path int true "id data"
+// @Param id path string true "id data"
 // @Success 200 {object} dto.ResponsePaging
 // @Router /apphandlingcost/{id} [DELETE]
 func (p *AppHandlingCostController) deleteHandler(c *gin.Context) {

@@ -16,6 +16,15 @@ type DepositeController struct {
 	rg     *gin.RouterGroup
 }
 
+// @Summary New deposito
+// @Description Create New deposito Data
+// @Tags Deposito
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer Token" default(Bearer <token>)
+// @Param request body dto.DepositeRequest true "Data deposito"
+// @Success 200 {object} dto.ResponseData
+// @Router /deposite [POST]
 func (d *DepositeController) createHandler(c *gin.Context) {
 	// get credential
 	role, err := common.GetRole(c)
@@ -73,11 +82,20 @@ func (d *DepositeController) createHandler(c *gin.Context) {
 		})
 		return
 	}
-	c.JSON(200, gin.H{
-		"message": "success creating data",
-	})
+	response := dto.ResponseMessage{
+		Message: "success creating data",
+	}
+	c.JSON(200, response)
 }
 
+// @Summary get detail deposito user
+// @Description Create New deposito Data
+// @Tags Deposito
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer Token" default(Bearer <token>)
+// @Success 200 {object} dto.ResponseData
+// @Router /deposite/user [GET]
 func (d *DepositeController) getDepositeByUserHandler(c *gin.Context) {
 	id, err := common.GetId(c)
 	if err != nil {
@@ -101,12 +119,22 @@ func (d *DepositeController) getDepositeByUserHandler(c *gin.Context) {
 		})
 		return
 	}
-	c.JSON(200, gin.H{
-		"message": "success getting data",
-		"data":    result,
-	})
+	response := dto.ResponseData{
+		Message: "success getting data",
+		Data:    result,
+	}
+	c.JSON(200, response)
 }
 
+// @Summary get deposito by id user
+// @Description get deposito by id user
+// @Tags Deposito
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer Token" default(Bearer <token>)
+// @Param id path string true "Id ucredential user"
+// @Success 200 {object} dto.ResponseData
+// @Router /deposite/user/{id} [GET]
 func (d *DepositeController) getDepositeByIdHandler(c *gin.Context) {
 	// getting input
 	id := c.Param("id")
@@ -118,12 +146,22 @@ func (d *DepositeController) getDepositeByIdHandler(c *gin.Context) {
 		})
 		return
 	}
-	c.JSON(200, gin.H{
-		"message": "success getting data",
-		"data":    result,
-	})
+	response := dto.ResponseData{
+		Message: "success getting data",
+		Data:    result,
+	}
+	c.JSON(200, response)
 }
 
+// @Summary get deposito by id
+// @Description get deposito by id deposito
+// @Tags Deposito
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer Token" default(Bearer <token>)
+// @Param id path string true "Id deposito"
+// @Success 200 {object} dto.ResponseData
+// @Router /deposite/{id} [GET]
 func (d *DepositeController) getDepositeByUserIdHandler(c *gin.Context) {
 	// getting input
 	id := c.Param("id")
@@ -157,12 +195,23 @@ func (d *DepositeController) getDepositeByUserIdHandler(c *gin.Context) {
 		})
 		return
 	}
-	c.JSON(200, gin.H{
-		"message": "success getting data",
-		"data":    result,
-	})
+	response := dto.ResponseData{
+		Message: "success getting data",
+		Data:    result,
+	}
+	c.JSON(200, response)
 }
 
+// @Summary Get all
+// @Description get all data deposito
+// @Tags Deposito
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer Token" default(Bearer <token>)
+// @Param page path int true "page of pagination"
+// @Param size path int true "size of pagination"
+// @Success 200 {object} dto.ResponsePaging
+// @Router /deposite/list/{page}/{size} [GET]
 func (d *DepositeController) paggingHandler(c *gin.Context) {
 	// Mengambil parameter dari URL
 	page, _ := strconv.Atoi(c.Param("page"))
@@ -189,15 +238,23 @@ func (d *DepositeController) paggingHandler(c *gin.Context) {
 		return
 	}
 
-	response := gin.H{
-		"message": "Success getting data",
-		"data":    model,
-		"paging":  pagereturn,
+	response := dto.ResponsePaging{
+		Message: "Success getting data",
+		Data:    model,
+		Paging:  pagereturn,
 	}
 
 	c.JSON(200, response)
 }
 
+// @Summary update
+// @Description update data deposito
+// @Tags Deposito
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer Token" default(Bearer <token>)
+// @Success 200 {object} dto.ResponseData
+// @Router /deposite/update [PUT]
 func (d *DepositeController) updateHandler(c *gin.Context) {
 	// get credential
 	role, err := common.GetRole(c)

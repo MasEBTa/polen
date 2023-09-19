@@ -99,7 +99,7 @@ const docTemplate = `{
         },
         "/apphandlingcost/list/{page}/{size}": {
             "get": {
-                "description": "Create New Apps Handling Cost Data",
+                "description": "get all Apps Handling Cost Data",
                 "consumes": [
                     "application/json"
                 ],
@@ -167,7 +167,7 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "type": "integer",
+                        "type": "string",
                         "description": "id data",
                         "name": "id",
                         "in": "path",
@@ -449,6 +449,410 @@ const docTemplate = `{
                 }
             }
         },
+        "/deposite": {
+            "post": {
+                "description": "Create New deposito Data",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Deposito"
+                ],
+                "summary": "New deposito",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003ctoken\u003e",
+                        "description": "Bearer Token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Data deposito",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.DepositeRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/deposite/list/{page}/{size}": {
+            "get": {
+                "description": "get all data deposito",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Deposito"
+                ],
+                "summary": "Get all",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003ctoken\u003e",
+                        "description": "Bearer Token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "page of pagination",
+                        "name": "page",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "size of pagination",
+                        "name": "size",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponsePaging"
+                        }
+                    }
+                }
+            }
+        },
+        "/deposite/update": {
+            "put": {
+                "description": "update data deposito",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Deposito"
+                ],
+                "summary": "update",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003ctoken\u003e",
+                        "description": "Bearer Token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/deposite/user": {
+            "get": {
+                "description": "Create New deposito Data",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "deposito"
+                ],
+                "summary": "get detail deposito user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003ctoken\u003e",
+                        "description": "Bearer Token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/deposite/user/{id}": {
+            "get": {
+                "description": "get deposito by id user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "deposito"
+                ],
+                "summary": "get deposito by id user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003ctoken\u003e",
+                        "description": "Bearer Token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Id ucredential user",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/deposite/{id}": {
+            "get": {
+                "description": "get deposito by id deposito",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "deposito"
+                ],
+                "summary": "get deposito by id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003ctoken\u003e",
+                        "description": "Bearer Token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Id deposito",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/depositeinterest": {
+            "put": {
+                "description": "update data deposito interest",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "deposito interest"
+                ],
+                "summary": "update",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003ctoken\u003e",
+                        "description": "Bearer Token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Data deposite interest",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.DepositeInterestRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseData"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "create new data deposito interest",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "deposito interest"
+                ],
+                "summary": "new",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003ctoken\u003e",
+                        "description": "Bearer Token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Data deposite interest",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.DepositeInterestReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseData"
+                        }
+                    }
+                }
+            }
+        },
+        "/depositeinterest/list/{page}/{size}": {
+            "get": {
+                "description": "get all data deposito interest",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "deposito interest"
+                ],
+                "summary": "Get all",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003ctoken\u003e",
+                        "description": "Bearer Token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "page of pagination",
+                        "name": "page",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "size of pagination",
+                        "name": "size",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponsePaging"
+                        }
+                    }
+                }
+            }
+        },
+        "/depositeinterest/{id}": {
+            "delete": {
+                "description": "delete data deposito interest",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "deposito interest"
+                ],
+                "summary": "delete",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003ctoken\u003e",
+                        "description": "Bearer Token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseMessage"
+                        }
+                    }
+                }
+            }
+        },
         "/user/{page}/{size}": {
             "get": {
                 "description": "Getting All User",
@@ -607,6 +1011,51 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.DepositeInterestReq": {
+            "type": "object",
+            "properties": {
+                "duration mounth": {
+                    "type": "integer"
+                },
+                "interest rate": {
+                    "type": "number"
+                },
+                "tax rate": {
+                    "type": "number"
+                }
+            }
+        },
+        "dto.DepositeInterestRequest": {
+            "type": "object",
+            "properties": {
+                "duration mounth": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "interest rate": {
+                    "type": "number"
+                },
+                "tax rate": {
+                    "type": "number"
+                }
+            }
+        },
+        "dto.DepositeRequest": {
+            "type": "object",
+            "properties": {
+                "deposite amount": {
+                    "type": "integer"
+                },
+                "interest rate id": {
+                    "type": "string"
+                },
+                "user id": {
+                    "type": "string"
+                }
+            }
+        },
         "dto.GetAuthResponse": {
             "type": "object",
             "properties": {
@@ -726,7 +1175,7 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "",
 	BasePath:         "/api/v1",
 	Schemes:          []string{"http"},
-	Title:            "Laundry APps",
+	Title:            "Laundry Apps",
 	Description:      "",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,

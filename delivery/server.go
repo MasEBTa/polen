@@ -52,7 +52,7 @@ func (s *Server) initControllers() {
 }
 
 func (s *Server) swagDocs() {
-	docs.SwaggerInfo.Title = "Todo App"
+	docs.SwaggerInfo.Title = "Polen p2p Landing App"
 	docs.SwaggerInfo.Version = "v1"
 	docs.SwaggerInfo.BasePath = "/api/v1"
 	s.engine.GET("/api/v1/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
