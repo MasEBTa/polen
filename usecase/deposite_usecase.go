@@ -29,6 +29,10 @@ func (d *depositeUseCase) Update() error {
 
 // Pagging implements DepositeUseCase.
 func (d *depositeUseCase) Pagging(payload dto.PageRequest) ([]dto.Deposite, dto.Paging, error) {
+	// limit Size, Offset (page - 1) * size
+	if payload.Page < 0 {
+		payload.Page = 1
+	}
 	return d.repo.Pagging(payload)
 }
 

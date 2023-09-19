@@ -23,6 +23,10 @@ type depositeInterestUseCase struct {
 
 // Pagging implements DepositeInterestUseCase.
 func (d *depositeInterestUseCase) Pagging(payload dto.PageRequest) ([]dto.DepositeInterestRequest, dto.Paging, error) {
+	// limit Size, Offset (page - 1) * size
+	if payload.Page < 0 {
+		payload.Page = 1
+	}
 	return d.repo.Pagging(payload)
 }
 
@@ -81,13 +85,13 @@ func (d *depositeInterestUseCase) CreateNew(payload dto.DepositeInterestRequest)
 		return 400, fmt.Errorf("id is required")
 	}
 	if payload.InterestRate == 0 {
-		return 400, fmt.Errorf("id is required")
+		return 400, fmt.Errorf("interest rate is required")
 	}
 	if payload.TaxRate == 0 {
-		return 400, fmt.Errorf("id is required")
+		return 400, fmt.Errorf("tax is required")
 	}
 	if payload.DurationMounth == 0 {
-		return 400, fmt.Errorf("id is required")
+		return 400, fmt.Errorf("duration month is required")
 	}
 	model := model.DepositeInterest{
 		Id:             common.GenerateID(),
