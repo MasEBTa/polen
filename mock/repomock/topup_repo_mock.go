@@ -46,8 +46,8 @@ func (t *TopupRepoMock) FindUploadedFile() ([]dto.TopUp, error) {
 }
 func (t *TopupRepoMock) Pagging(payload dto.PageRequest) ([]dto.TopUp, dto.Paging, error) {
 	args := t.Called(payload)
-	if args.Get(1) != nil {
-		return nil, dto.Paging{}, args.Error(1)
+	if args.Get(2) != nil {
+		return nil, dto.Paging{}, args.Error(2)
 	}
 	return args.Get(0).([]dto.TopUp), args.Get(1).(dto.Paging), nil
 }

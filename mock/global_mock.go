@@ -39,6 +39,11 @@ var MockBiodata = model.BiodataUser{
 	StatusUpdate:   false,
 	Information:    "biodata is not updated",
 }
+var MockSaldoData = dto.Saldo{
+	Id:    "1",
+	UcId:  "1",
+	Total: 100000,
+}
 var MockSaldoDatas = []dto.Saldo{
 	{
 		Id:    "1",
@@ -188,9 +193,14 @@ var MockUserCreds = []model.UserCredential{
 		Email:    "akbarismail@gmail.com",
 		Password: "123",
 		VANumber: "Efvfdvfdhucsucuh",
-		Role:     "borrower",
+		Role:     "admin",
 		IsActive: true,
 	},
+}
+var MockUpdateBioReq = dto.UpdateBioRequest{
+	UserCredentialId: "1",
+	IsAglible:        false,
+	Information:      "pending",
 }
 var MockBiodataResponse = dto.BiodataResponse{
 	Id:          "1",
@@ -301,7 +311,7 @@ var MockAppHC = model.AppHandlingCost{
 	Id:      "1",
 	Name:    "akbar ismail",
 	Nominal: 10000,
-	Unit:    "Rp",
+	Unit:    "rupiah",
 }
 var MockLatePFDatas = []model.LatePaymentFee{
 	{
@@ -315,7 +325,7 @@ var MockLatePF = model.LatePaymentFee{
 	Id:      "1",
 	Name:    "akbar ismail",
 	Nominal: 10000,
-	Unit:    "Rp",
+	Unit:    "rupiah",
 }
 var MockLoanInterest = model.LoanInterest{
 	Id:               "1",
@@ -488,4 +498,29 @@ var MockDepositesDTO = []dto.DepositeDto{
 		NetProfit:      10,
 		TotalReturn:    110,
 	},
+}
+var MockDepositeByUserResponse = dto.DepositeByUserResponse{
+	BioUser: dto.BiodataResponse{
+		Id:          "1",
+		NamaLengkap: "akbar ismail",
+		UserCredential: dto.GetAuthResponse{
+			Id:       "1",
+			Username: "akbaris",
+			Email:    "akbar@gmail.com",
+			Password: "123",
+			Role:     "peminjam",
+			VaNumber: "bfdffbfvfhvf",
+			IsActive: false,
+		},
+		Nik:          "32010",
+		NomorTelepon: "081287743960",
+		Pekerjaan:    "IT",
+		TempatLahir:  "Jakarta",
+		TanggalLahir: "2000-12-12",
+		KodePos:      "1610",
+		IsAglible:    false,
+		StatusUpdate: false,
+		Information:  "Additional",
+	},
+	Deposite: MockDepositeDto,
 }

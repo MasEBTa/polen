@@ -18,8 +18,8 @@ func (d *DepositeRepoMock) Update() error {
 // Pagging implements DepositeRepoMock.
 func (d *DepositeRepoMock) Pagging(payload dto.PageRequest) ([]dto.Deposite, dto.Paging, error) {
 	args := d.Called(payload)
-	if args.Get(1) != nil {
-		return nil, dto.Paging{}, args.Error(1)
+	if args.Get(2) != nil {
+		return nil, dto.Paging{}, args.Error(2)
 	}
 	return args.Get(0).([]dto.Deposite), args.Get(1).(dto.Paging), nil
 }

@@ -44,6 +44,13 @@ func (b *BiodataUserUseCaseTestSuite) TestPaging_Failed() {
 	assert.Equal(b.T(), 0, p.TotalRows)
 	assert.Equal(b.T(), 0, len(br))
 }
+func (b *BiodataUserUseCaseTestSuite) TestPaging_DefaultInputPage() {
+	b.biurm.On("Pagging", dto.PageRequest{Page: 1, Size: 5}).Return(mock.MockBiodataResponses, mock.MockPaging, nil)
+	br, p, err := b.buuc.Paging(dto.PageRequest{Page: -1, Size: 5})
+	assert.Nil(b.T(), err)
+	assert.Equal(b.T(), 1, p.TotalPages)
+	assert.Equal(b.T(), 1, len(br))
+}
 func (b *BiodataUserUseCaseTestSuite) TestFindByUcId_Success() {
 	b.biurm.On("FindByUcId", mock.MockUserCred.Id).Return(mock.MockBiodataResponse, nil)
 	br, err := b.buuc.FindByUcId(mock.MockUserCred.Id)
@@ -55,6 +62,20 @@ func (b *BiodataUserUseCaseTestSuite) TestFindByUcId_Failed() {
 	br, err := b.buuc.FindByUcId(mock.MockUserCred.Id)
 	assert.Error(b.T(), err)
 	assert.Equal(b.T(), dto.BiodataResponse{}, br)
+}
+func (b *BiodataUserUseCaseTestSuite) TestAdminUpdate_InfoRequired() {
+	b.biurm.On("FindByUcId", mock.MockUpdateBioReq.UserCredentialId).Return(mock.MockBiodataResponse, nil)
+	b.biurm.On("AdminUpdate", mock.MockBiodata).Return(nil)
+	i, err := b.buuc.AdminUpdate(dto.UpdateBioRequest{UserCredentialId: "1"}, b.ctx)
+	assert.Error(b.T(), err)
+	assert.Equal(b.T(), 400, i)
+}
+func (b *BiodataUserUseCaseTestSuite) TestAdminUpdate_InvalidUCId() {
+	b.biurm.On("FindByUcId", mock.MockUpdateBioReq.UserCredentialId).Return(mock.MockBiodataResponse, errors.New("error"))
+	b.biurm.On("AdminUpdate", mock.MockBiodata).Return(nil)
+	i, err := b.buuc.AdminUpdate(mock.MockUpdateBioReq, b.ctx)
+	assert.Error(b.T(), err)
+	assert.Equal(b.T(), 500, i)
 }
 func (b *BiodataUserUseCaseTestSuite) TestFindUserUpdated_Success() {
 	b.biurm.On("FindUserUpdated").Return(mock.MockBiodataResponses, nil)

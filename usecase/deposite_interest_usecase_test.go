@@ -67,6 +67,12 @@ func (d *DepositeInteresetUseCaseTestSuite) TestUpdate_Failed() {
 	err := d.diuc.Update(mock.MockDepositeInterestReq)
 	assert.Error(d.T(), err)
 }
+func (d *DepositeInteresetUseCaseTestSuite) TestUpdate_CheckGTZero() {
+	d.dirm.On("FindById", mock.MockDepositeInterestReq.Id).Return(mock.MockDepositeInterestReq, nil)
+	d.dirm.On("Update", mock.MockDepositeInterestReq).Return(nil)
+	err := d.diuc.Update(dto.DepositeInterestRequest{Id: "1"})
+	assert.Nil(d.T(), err)
+}
 func (d *DepositeInteresetUseCaseTestSuite) TestUpdate_EmptyInvalid() {
 	// Id required
 	d.dirm.On("FindById", mock.MockDepositeInterestReq.Id).Return(mock.MockDepositeInterestReq, nil)
@@ -101,4 +107,25 @@ func (d *DepositeInteresetUseCaseTestSuite) TestCreateNew_EmptyInvalid() {
 	i, err = d.diuc.CreateNew(dto.DepositeInterestRequest{Id: "1", InterestRate: 1, TaxRate: 1})
 	assert.Error(d.T(), err)
 	assert.Equal(d.T(), 400, i)
+}
+func (d *DepositeInteresetUseCaseTestSuite) TestPagging_Success() {
+	d.dirm.On("Pagging", mock.MockPageReq).Return(mock.MockDeposites, mock.MockPaging, nil)
+	ahc, p, err := d.diuc.Pagging(mock.MockPageReq)
+	assert.Nil(d.T(), err)
+	assert.Equal(d.T(), len(mock.MockDeposites), len(ahc))
+	assert.Equal(d.T(), mock.MockPaging.TotalRows, p.TotalRows)
+}
+func (d *DepositeInteresetUseCaseTestSuite) TestPagging_Failed() {
+	d.dirm.On("Pagging", mock.MockPageReq).Return(nil, dto.Paging{}, errors.New("failed"))
+	ahc, p, err := d.diuc.Pagging(mock.MockPageReq)
+	assert.Error(d.T(), err)
+	assert.Equal(d.T(), 0, len(ahc))
+	assert.Equal(d.T(), dto.Paging{}, p)
+}
+func (d *DepositeInteresetUseCaseTestSuite) TestPagging_DefaultPage() {
+	d.dirm.On("Pagging", mock.MockPageReq).Return(mock.MockDeposites, mock.MockPaging, nil)
+	ahc, p, err := d.diuc.Pagging(dto.PageRequest{Page: -1, Size: 5})
+	assert.Nil(d.T(), err)
+	assert.Equal(d.T(), len(mock.MockDeposites), len(ahc))
+	assert.Equal(d.T(), mock.MockPaging.TotalRows, p.TotalRows)
 }
