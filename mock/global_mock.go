@@ -15,6 +15,10 @@ var MockUserCred = model.UserCredential{
 	Role:     "borrower",
 	IsActive: true,
 }
+var MockAuthLoginReq = dto.AuthLoginRequest{
+	Username: "akbaris",
+	Password: "password",
+}
 var MockAuthReq = dto.AuthRequest{
 	Username: "akbaris",
 	Email:    "akbar@gmail.com",
@@ -523,4 +527,35 @@ var MockDepositeByUserResponse = dto.DepositeByUserResponse{
 		Information:  "Additional",
 	},
 	Deposite: MockDepositeDto,
+}
+var MockDTOLoan = dto.Loan{
+	Id:                  "1",
+	UserCredentialId:    "1",
+	LoanDateCreate:      time.Now(),
+	LoanAmount:          0,
+	LoanDuration:        0,
+	LoanInterestRate:    0,
+	LoanInterestNominal: 0,
+	AppHandlingCost:     "",
+	TotalAmountOfDepth:  0,
+	IsPayed:             false,
+	Status:              "pending",
+	Installment: []dto.LoanInstallenmentResponse{
+		{
+			Id:                 "1",
+			IsPayed:            false,
+			PaymentInstallment: 0,
+			PaymentDeadLine:    time.Now(),
+			TotalAmountOfDepth: 0,
+			LatePayment: dto.LatePayment{
+				LatePaymentFees:      "rupiah",
+				LatePaymentDays:      0,
+				LatePaymentFeesTotal: 0,
+			},
+			PaymentDate:           time.Now(),
+			Status:                "pending",
+			TransferConfirmRecipe: false,
+			File:                  "",
+		},
+	},
 }

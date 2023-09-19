@@ -10,10 +10,11 @@ type AuthUseCaseMock struct {
 	mock.Mock
 }
 
-func (a *AuthUseCaseMock) Login(payload dto.AuthRequest) (dto.AuthResponse, error) {
-	args := a.Called(payload)
-	if args.Get(1) != nil {
-		return dto.AuthResponse{}, args.Error(1)
+// Login implements AuthUseCase.
+func (a *AuthUseCaseMock) Login(payload dto.AuthLoginRequest) (dto.AuthResponse, error) {
+	a2 := a.Called(payload)
+	if a2.Get(1) != nil {
+		return dto.AuthResponse{}, a2.Error(1)
 	}
-	return args.Get(0).(dto.AuthResponse), nil
+	return a2.Get(0).(dto.AuthResponse), nil
 }
