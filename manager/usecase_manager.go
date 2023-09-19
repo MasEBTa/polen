@@ -78,7 +78,7 @@ func (u *useCaseManager) AuthUseCase() usecase.AuthUseCase {
 
 // UserUseCase implements UseCaseManager.
 func (u *useCaseManager) UserUseCase() usecase.UserUseCase {
-	return usecase.NewUserUseCase(u.repoManager.UserRepo())
+	return usecase.NewUserUseCase(u.repoManager.UserRepo(), u.ctx)
 }
 
 func NewUsecaseManager(repoManager RepoManager) UseCaseManager {

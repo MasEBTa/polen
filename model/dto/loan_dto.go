@@ -29,14 +29,14 @@ type LoanInstallenmentResponse struct {
 	PaymentInstallment    int         `json:"payment instalenment"`
 	PaymentDeadLine       time.Time   `json:"payment deadline"`
 	TotalAmountOfDepth    int         `json:"total amount"`
-	LatePayment           latePayment `json:"late payment"`
+	LatePayment           LatePayment `json:"late payment"`
 	PaymentDate           time.Time   `json:"payment date"`
 	Status                string      `json:"status"`
 	TransferConfirmRecipe bool        `json:"sending transfer recipe"`
 	File                  string      `json:"file path"`
 }
 
-type latePayment struct {
+type LatePayment struct {
 	LatePaymentFees      string `json:"late paymnet fees"`
 	LatePaymentDays      int    `json:"late payment days"`
 	LatePaymentFeesTotal int    `json:"late payment fees total"`
