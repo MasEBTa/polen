@@ -18,8 +18,21 @@ type LatePaymentFeeController struct {
 	rg               *gin.RouterGroup
 }
 
+// @Summary new
+// @Description create new data late fee payment
+// @Tags late fee payment
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer Token" default(Bearer <token>)
+// @Param request body dto.LatePaymentFeeReq true "Data late fee"
+// @Success 200 {object} dto.ResponseData
+// @Router /latepaymentfee [POST]
 func (p *LatePaymentFeeController) createHandler(c *gin.Context) {
-	var app model.LatePaymentFee
+	var app dto.LatePaymentFeeReq
+	var payload model.LatePaymentFee
+	payload.Name = app.Name
+	payload.Nominal = app.Nominal
+	payload.Unit = app.Unit
 	if err := c.ShouldBindJSON(&app); err != nil {
 		c.JSON(400, gin.H{
 			"message": err.Error(),
@@ -47,8 +60,8 @@ func (p *LatePaymentFeeController) createHandler(c *gin.Context) {
 		})
 		return
 	}
-	app.Id = uuid.NewString()
-	code, err := p.LatePaymentFeeUC.CreateNew(app)
+	payload.Id = uuid.NewString()
+	code, err := p.LatePaymentFeeUC.CreateNew(payload)
 	if err != nil {
 		c.JSON(code, gin.H{
 			"message": err.Error(),
@@ -56,12 +69,23 @@ func (p *LatePaymentFeeController) createHandler(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{
-		"message": "success creating data",
-		"data":    app,
-	})
+	result := dto.ResponseData{
+		Message: "success creating data",
+		Data:    payload,
+	}
+	c.JSON(http.StatusCreated, result)
 }
 
+// @Summary get all
+// @Description get all data late fee payment
+// @Tags late fee payment
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer Token" default(Bearer <token>)
+// @Param page path int true "page of pagination"
+// @Param size path int true "size of pagination"
+// @Success 200 {object} dto.ResponsePaging
+// @Router /latepaymentfee/list/{page}/{size} [GET]
 func (p *LatePaymentFeeController) paggingHandler(c *gin.Context) {
 	// Mengambil parameter dari URL
 	page, _ := strconv.Atoi(c.Param("page"))
@@ -88,10 +112,10 @@ func (p *LatePaymentFeeController) paggingHandler(c *gin.Context) {
 		return
 	}
 
-	response := gin.H{
-		"message": "Success getting data",
-		"data":    model,
-		"paging":  pagereturn,
+	response := dto.ResponsePaging{
+		Message: "Success getting data",
+		Data:    model,
+		Paging:  pagereturn,
 	}
 
 	c.JSON(200, response)
@@ -105,6 +129,15 @@ func (p *LatePaymentFeeController) Route() {
 
 }
 
+// @Summary delete
+// @Description delete data late fee payment
+// @Tags late fee payment
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer Token" default(Bearer <token>)
+// @Param id path string true "id"
+// @Success 200 {object} dto.ResponseMessage
+// @Router /latepaymentfee/{id} [DELETE]
 func (p *LatePaymentFeeController) deleteHandler(c *gin.Context) {
 	id := c.Param("id")
 
@@ -137,11 +170,21 @@ func (p *LatePaymentFeeController) deleteHandler(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, gin.H{
-		"message": "successfully delete cost",
-	})
+	result := dto.ResponseMessage{
+		Message: "success creating data",
+	}
+	c.JSON(http.StatusCreated, result)
 }
 
+// @Summary update
+// @Description update data late fee payment
+// @Tags late fee payment
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer Token" default(Bearer <token>)
+// @Param request body model.LatePaymentFee true "Data late fee"
+// @Success 200 {object} dto.ResponseMessage
+// @Router /latepaymentfee [PUT]
 func (p *LatePaymentFeeController) updateHandler(c *gin.Context) {
 	var app model.LatePaymentFee
 	if err := c.ShouldBindJSON(&app); err != nil {
@@ -179,9 +222,10 @@ func (p *LatePaymentFeeController) updateHandler(c *gin.Context) {
 		})
 		return
 	}
-	c.JSON(200, gin.H{
-		"message": "successfully update",
-	})
+	result := dto.ResponseMessage{
+		Message: "success creating data",
+	}
+	c.JSON(http.StatusCreated, result)
 }
 
 func NewLatePaymentFeeController(LatePaymentFeeUC usecase.LatePaymentFeeUsecase, rg *gin.RouterGroup) *LatePaymentFeeController {

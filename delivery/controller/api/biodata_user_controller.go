@@ -15,6 +15,14 @@ type BiodataUserController struct {
 	rg        *gin.RouterGroup
 }
 
+// @Summary Detail Biodata User
+// @Description Get detail Biodata
+// @Tags Biodata
+// @Accept json
+// @Param Authorization header string true "Bearer Token" default(Bearer <token>)
+// @Produce json
+// @Success 200 {object} dto.BiodataResponse
+// @Router /biodata [GET]
 func (u *BiodataUserController) listHandler(c *gin.Context) {
 	biodata, err := u.biodataUC.FindByUserCredential(c)
 	if err != nil {
@@ -27,6 +35,14 @@ func (u *BiodataUserController) listHandler(c *gin.Context) {
 	c.JSON(200, biodata)
 }
 
+// @Summary Find User Updated
+// @Description Find User Which has Been Updated the Biodata
+// @Tags Biodata
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer Token" default(Bearer <token>)
+// @Success 200 {object} dto.ResponseData
+// @Router /biodata/updated [GET]
 func (u *BiodataUserController) listUserUpdated(c *gin.Context) {
 	role, err := common.GetRole(c)
 	if err != nil {
@@ -56,10 +72,23 @@ func (u *BiodataUserController) listUserUpdated(c *gin.Context) {
 		})
 		return
 	}
+	response := dto.ResponseData{
+		Message: "Successfully Getting Data",
+		Data:    biodata,
+	}
 
-	c.JSON(200, biodata)
+	c.JSON(200, response)
 }
 
+// @Summary Find User Updated
+// @Description Find User Which has Been Updated the Biodata
+// @Tags Biodata
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer Token" default(Bearer <token>)
+// @Param request body dto.UpdateBioRequest true "data vefication user"
+// @Success 200 {object} dto.ResponseMessage
+// @Router /biodata/verified [PUT]
 func (u *BiodataUserController) updateAdmin(c *gin.Context) {
 	var req dto.UpdateBioRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -96,11 +125,21 @@ func (u *BiodataUserController) updateAdmin(c *gin.Context) {
 		})
 		return
 	}
-	c.JSON(code, gin.H{
-		"message": "successfully update verification user",
-	})
+	response := dto.ResponseMessage{
+		Message: "successfully update verification user",
+	}
+	c.JSON(code, response)
 }
 
+// @Summary Update Biodata
+// @Description Do Update User Biodata
+// @Tags Biodata
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer Token" default(Bearer <token>)
+// @Param request body dto.BiodataRequest true "data biodata user"
+// @Success 200 {object} dto.ResponseMessage
+// @Router /biodata/update [PUT]
 func (u *BiodataUserController) updateUser(c *gin.Context) {
 	var biodata dto.BiodataRequest
 	if err := c.ShouldBindJSON(&biodata); err != nil {
@@ -117,11 +156,22 @@ func (u *BiodataUserController) updateUser(c *gin.Context) {
 		})
 		return
 	}
-	c.JSON(code, gin.H{
-		"message": "successfully update biodata",
-	})
+	response := dto.ResponseMessage{
+		Message: "successfully update biodata",
+	}
+	c.JSON(code, response)
 }
 
+// @Summary Get all data
+// @Description Do Update User Biodata
+// @Tags Biodata
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer Token" default(Bearer <token>)
+// @Param page path int true "page of pagination"
+// @Param size path int true "size of pagination"
+// @Success 200 {object} dto.ResponsePaging
+// @Router /biodata/list/{page}/{size} [GET]
 func (b *BiodataUserController) paggingBiodataHandler(c *gin.Context) {
 	// get role
 	role, err := common.GetRole(c)
@@ -171,10 +221,10 @@ func (b *BiodataUserController) paggingBiodataHandler(c *gin.Context) {
 		return
 	}
 
-	response := gin.H{
-		"message": "Success getting data",
-		"data":    model,
-		"paging":  pagereturn,
+	response := dto.ResponsePaging{
+		Message: "Success getting data",
+		Data:    model,
+		Paging:  pagereturn,
 	}
 
 	c.JSON(200, response)

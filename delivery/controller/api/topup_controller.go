@@ -22,6 +22,15 @@ type TopUpController struct {
 	rg      *gin.RouterGroup
 }
 
+// @Summary get by id user
+// @Description get data top up by user id
+// @Tags topup
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer Token" default(Bearer <token>)
+// @Param id path int true "id"
+// @Success 200 {object} dto.ResponseData
+// @Router /topup/user/{id} [GET]
 func (t *TopUpController) getByIdUserId(c *gin.Context) {
 	id := c.Param("id")
 	// ambil role
@@ -60,6 +69,15 @@ func (t *TopUpController) getByIdUserId(c *gin.Context) {
 	})
 }
 
+// @Summary get by id data
+// @Description get data top up by id data
+// @Tags topup
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer Token" default(Bearer <token>)
+// @Param id path int true "id"
+// @Success 200 {object} dto.ResponseData
+// @Router /topup/{id} [GET]
 func (t *TopUpController) getById(c *gin.Context) {
 	id := c.Param("id")
 	data, err := t.topupUC.FindById(id)
@@ -70,12 +88,22 @@ func (t *TopUpController) getById(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, gin.H{
-		"message": "success getting data",
-		"data":    data,
-	})
+	response := dto.ResponseData{
+		Message: "success getting data",
+		Data:    data,
+	}
+	c.JSON(200, response)
 }
 
+// @Summary confirm
+// @Description confirm data topup
+// @Tags topup
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer Token" default(Bearer <token>)
+// @Param request body dto.TopUpupdate true "Data top up"
+// @Success 200 {object} dto.ResponseMessage
+// @Router /topup/confirm [PUT]
 func (t *TopUpController) ConfirmUpload(c *gin.Context) {
 	// ambil role
 	role, err := common.GetRole(c)
@@ -102,13 +130,17 @@ func (t *TopUpController) ConfirmUpload(c *gin.Context) {
 	}
 
 	// ambil data request
+	var data dto.TopUpupdate
 	var topup dto.TopUpUser
-	if err := c.ShouldBindJSON(&topup); err != nil {
+	if err := c.ShouldBindJSON(&data); err != nil {
 		c.JSON(400, gin.H{
 			"message": err.Error(),
 		})
 		return
 	}
+	topup.Accepted = data.Accepted
+	topup.Id = data.Id
+	topup.Status = data.Status
 	code, err := t.topupUC.ConfimUploadFile(topup)
 	if err != nil {
 		c.JSON(code, gin.H{
@@ -116,11 +148,20 @@ func (t *TopUpController) ConfirmUpload(c *gin.Context) {
 		})
 		return
 	}
-	c.JSON(200, gin.H{
-		"message": "success updating data",
-	})
+	endresult := dto.ResponseMessage{
+		Message: "success creating data",
+	}
+	c.JSON(http.StatusCreated, endresult)
 }
 
+// @Summary get data updated
+// @Description get updated data topup
+// @Tags topup
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer Token" default(Bearer <token>)
+// @Success 200 {object} dto.ResponseData
+// @Router /topup/confirm [GET]
 func (t *TopUpController) UploadedFile(c *gin.Context) {
 	// ambil role
 	role, err := common.GetRole(c)
@@ -154,12 +195,22 @@ func (t *TopUpController) UploadedFile(c *gin.Context) {
 		})
 	}
 
-	c.JSON(200, gin.H{
-		"message": "success getting data",
-		"data":    data,
-	})
+	response := dto.ResponseData{
+		Message: "success getting data",
+		Data:    data,
+	}
+	c.JSON(200, response)
 }
 
+// @Summary new
+// @Description create new data topup
+// @Tags topup
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer Token" default(Bearer <token>)
+// @Param request body dto.TopUpReq true "Data topup"
+// @Success 200 {object} dto.ResponseData
+// @Router /topup [POST]
 func (t *TopUpController) createHandler(c *gin.Context) {
 	// ambil id
 	ucid, err := common.GetId(c)
@@ -220,8 +271,9 @@ func (t *TopUpController) createHandler(c *gin.Context) {
 		return
 	}
 
+	var data dto.TopUpReq
 	var topup dto.TopUpUser
-	if err := c.ShouldBindJSON(&topup); err != nil {
+	if err := c.ShouldBindJSON(&data); err != nil {
 		c.JSON(400, gin.H{
 			"message": err.Error(),
 		})
@@ -229,6 +281,7 @@ func (t *TopUpController) createHandler(c *gin.Context) {
 	}
 
 	topup.Id = uuid.NewString()
+	topup.TopUpAmount = data.TopUpAmount
 	topup.UserCredential.Id = ucid
 	result, err := t.topupUC.CreateNew(topup)
 	if err != nil {
@@ -238,12 +291,21 @@ func (t *TopUpController) createHandler(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{
-		"message": "success creating data",
-		"data":    result,
-	})
+	endresult := dto.ResponseData{
+		Message: "success creating data",
+		Data:    result,
+	}
+	c.JSON(http.StatusCreated, endresult)
 }
 
+// @Summary get by user login
+// @Description get data top up by user login
+// @Tags topup
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer Token" default(Bearer <token>)
+// @Success 200 {object} dto.ResponseData
+// @Router /topup/user [GET]
 func (t *TopUpController) getByIdUserLoginHandler(c *gin.Context) {
 	// ambil role
 	role, err := common.GetRole(c)
@@ -292,12 +354,23 @@ func (t *TopUpController) getByIdUserLoginHandler(c *gin.Context) {
 		})
 		return
 	}
-	c.JSON(200, gin.H{
-		"message": "success getting data",
-		"data":    data,
-	})
+	response := dto.ResponseData{
+		Message: "success getting data",
+		Data:    data,
+	}
+	c.JSON(200, response)
 }
 
+// @Summary upload
+// @Description upload recipe
+// @Tags topup
+// @Accept mpfd
+// @Produce json
+// @Param Authorization header string true "Bearer Token" default(Bearer <token>)
+// @Param file formData file true "File to upload"
+// @Param id formData string true "ID parameter"
+// @Success 200 {object} dto.ResponseMessage
+// @Router /topup/upload [POST]
 func (t *TopUpController) UploadFile(c *gin.Context) {
 	file, err := c.FormFile("file")
 	if err != nil {
@@ -353,9 +426,22 @@ func (t *TopUpController) UploadFile(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "success uploaded data"})
+	endresult := dto.ResponseMessage{
+		Message: "success uploaded data",
+	}
+	c.JSON(http.StatusCreated, endresult)
 }
 
+// @Summary get all
+// @Description get all data saldo
+// @Tags topup
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer Token" default(Bearer <token>)
+// @Param page path int true "page of pagination"
+// @Param size path int true "size of pagination"
+// @Success 200 {object} dto.ResponsePaging
+// @Router /topup/list/{page}/{size} [GET]
 func (t *TopUpController) paggingHandler(c *gin.Context) {
 	role, err := common.GetRole(c)
 	if err != nil {
@@ -402,17 +488,17 @@ func (t *TopUpController) paggingHandler(c *gin.Context) {
 		return
 	}
 
-	response := gin.H{
-		"message": "Success getting data",
-		"data":    model,
-		"paging":  pagereturn,
+	response := dto.ResponsePaging{
+		Message: "Success getting data",
+		Data:    model,
+		Paging:  pagereturn,
 	}
 
 	c.JSON(200, response)
 }
 
 func (t *TopUpController) Route() {
-	t.rg.POST("/topup/", middleware.AuthMiddleware(), t.createHandler)
+	t.rg.POST("/topup", middleware.AuthMiddleware(), t.createHandler)
 	t.rg.POST("/topup/upload", middleware.AuthMiddleware(), t.UploadFile)
 	t.rg.PUT("/topup/confirm", middleware.AuthMiddleware(), t.ConfirmUpload)
 	t.rg.GET("/topup/uploaded", middleware.AuthMiddleware(), t.UploadedFile)
