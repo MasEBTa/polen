@@ -23,17 +23,22 @@ type AppHandlingCostController struct {
 // @Tags Handling Cost
 // @Accept json
 // @Produce json
-// @Param request body dto.AuthLoginRequest true "Data login user"
+// @Param Authorization header string true "Bearer Token" default(Bearer <token>)
+// @Param request body dto.AppHandlingCostReq true "Data application handling cost"
 // @Success 200 {object} dto.ResponseData
-// @Router /auth/login [post]
+// @Router /apphandlingcost [POST]
 func (p *AppHandlingCostController) createHandler(c *gin.Context) {
-	var app model.AppHandlingCost
+	var app dto.AppHandlingCostReq
 	if err := c.ShouldBindJSON(&app); err != nil {
 		c.JSON(400, gin.H{
 			"message": err.Error(),
 		})
 		return
 	}
+	var apps model.AppHandlingCost
+	apps.Name = app.Name
+	apps.Nominal = app.Nominal
+	apps.Unit = app.Unit
 
 	role, err := common.GetRole(c)
 	if err != nil {
@@ -55,8 +60,8 @@ func (p *AppHandlingCostController) createHandler(c *gin.Context) {
 		})
 		return
 	}
-	app.Id = uuid.NewString()
-	code, err := p.appHandlingCostUC.CreateNew(app)
+	apps.Id = uuid.NewString()
+	code, err := p.appHandlingCostUC.CreateNew(apps)
 	if err != nil {
 		c.JSON(code, gin.H{
 			"message": err.Error(),
@@ -64,12 +69,24 @@ func (p *AppHandlingCostController) createHandler(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{
-		"message": "success creating data",
-		"data":    app,
-	})
+	response := dto.ResponseData{
+		Message: "successfully update verification user",
+		Data:    apps,
+	}
+
+	c.JSON(http.StatusCreated, response)
 }
 
+// @Summary Get all Handling Cost
+// @Description Create New Apps Handling Cost Data
+// @Tags Handling Cost
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer Token" default(Bearer <token>)
+// @Param page path int true "page of pagination"
+// @Param size path int true "size of pagination"
+// @Success 200 {object} dto.ResponsePaging
+// @Router /apphandlingcost/list/{page}/{size} [GET]
 func (p *AppHandlingCostController) paggingHandler(c *gin.Context) {
 	// Mengambil parameter dari URL
 	page, _ := strconv.Atoi(c.Param("page"))
@@ -113,6 +130,15 @@ func (p *AppHandlingCostController) Route() {
 
 }
 
+// @Summary delete data Handling Cost
+// @Description Create New Apps Handling Cost Data
+// @Tags Handling Cost
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer Token" default(Bearer <token>)
+// @Param id path int true "id data"
+// @Success 200 {object} dto.ResponsePaging
+// @Router /apphandlingcost/{id} [DELETE]
 func (p *AppHandlingCostController) deleteHandler(c *gin.Context) {
 	id := c.Param("id")
 
@@ -145,11 +171,21 @@ func (p *AppHandlingCostController) deleteHandler(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, gin.H{
-		"message": "successfully delete app handling cost",
-	})
+	response := dto.ResponseMessage{
+		Message: "successfully delete app handling cost",
+	}
+	c.JSON(200, response)
 }
 
+// @Summary Update Handling Cost
+// @Description Create New Apps Handling Cost Data
+// @Tags Handling Cost
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer Token" default(Bearer <token>)
+// @Param request body model.AppHandlingCost true "Data application handling cost"
+// @Success 200 {object} dto.ResponseMessage
+// @Router /apphandlingcost [PUT]
 func (p *AppHandlingCostController) updateHandler(c *gin.Context) {
 	var app model.AppHandlingCost
 	if err := c.ShouldBindJSON(&app); err != nil {
@@ -187,9 +223,10 @@ func (p *AppHandlingCostController) updateHandler(c *gin.Context) {
 		})
 		return
 	}
-	c.JSON(200, gin.H{
-		"message": "successfully update",
-	})
+	response := dto.ResponseMessage{
+		Message: "successfully update",
+	}
+	c.JSON(200, response)
 }
 
 func NewAppHandlingCostController(appHandlingCostUC usecase.AppHandlingCostUsecase, rg *gin.RouterGroup) *AppHandlingCostController {

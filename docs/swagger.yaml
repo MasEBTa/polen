@@ -1,5 +1,14 @@
 basePath: /api/v1
 definitions:
+  dto.AppHandlingCostReq:
+    properties:
+      name:
+        type: string
+      nominal:
+        type: number
+      unit:
+        type: string
+    type: object
   dto.AuthLoginRequest:
     properties:
       password:
@@ -118,11 +127,136 @@ definitions:
       user credential id:
         type: string
     type: object
+  model.AppHandlingCost:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      nominal:
+        type: number
+      unit:
+        type: string
+    type: object
 info:
   contact: {}
   title: Laundry APps
   version: "1.0"
 paths:
+  /apphandlingcost:
+    post:
+      consumes:
+      - application/json
+      description: Create New Apps Handling Cost Data
+      parameters:
+      - default: Bearer <token>
+        description: Bearer Token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Data application handling cost
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.AppHandlingCostReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ResponseData'
+      summary: New Handling Cost
+      tags:
+      - Handling Cost
+    put:
+      consumes:
+      - application/json
+      description: Create New Apps Handling Cost Data
+      parameters:
+      - default: Bearer <token>
+        description: Bearer Token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Data application handling cost
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.AppHandlingCost'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ResponseMessage'
+      summary: Update Handling Cost
+      tags:
+      - Handling Cost
+  /apphandlingcost/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Create New Apps Handling Cost Data
+      parameters:
+      - default: Bearer <token>
+        description: Bearer Token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: id data
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ResponsePaging'
+      summary: delete data Handling Cost
+      tags:
+      - Handling Cost
+  /apphandlingcost/list/{page}/{size}:
+    get:
+      consumes:
+      - application/json
+      description: Create New Apps Handling Cost Data
+      parameters:
+      - default: Bearer <token>
+        description: Bearer Token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: page of pagination
+        in: path
+        name: page
+        required: true
+        type: integer
+      - description: size of pagination
+        in: path
+        name: size
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ResponsePaging'
+      summary: Get all Handling Cost
+      tags:
+      - Handling Cost
   /auth/login:
     post:
       consumes:
