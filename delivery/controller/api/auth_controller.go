@@ -35,7 +35,7 @@ func (a *AuthController) loginHandler(c *gin.Context) {
 	authResponse, err := a.authUC.Login(data)
 	if err != nil {
 		c.AbortWithStatusJSON(500, gin.H{
-			"message": "Failed",
+			"message": err.Error(),
 		})
 		return
 	}
